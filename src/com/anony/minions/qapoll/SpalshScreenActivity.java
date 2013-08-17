@@ -1,8 +1,9 @@
 package com.anony.minions.qapoll;
 
-import android.os.Bundle;
 import android.app.Activity;
-import android.view.Menu;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
 
 public class SpalshScreenActivity extends Activity {
 
@@ -10,13 +11,53 @@ public class SpalshScreenActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.spalsh_screen);
+
+		initializeData();
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.spalsh_screen, menu);
-		return true;
+	private void initializeData() {
+		new InitDataTask().execute();
+	}
+
+	/**
+	 * we should initialize all the stuff here.
+	 */
+	private class InitDataTask extends AsyncTask<String, Integer, Boolean> {
+
+		@Override
+		protected void onPreExecute() {
+		}
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			// not really doing anything w/ the return value
+			return true;
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... progress) {
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+
+			if (result == true) {
+				// Start KhanFragmentActivity
+				Intent ide = new Intent();
+				ide.setClassName(getPackageName(), getPackageName()
+						+ ".activity.KhanFragmentActivity");
+				startActivity(ide);
+				// finish existing activity
+				finish();
+			}
+
+		}
+
 	}
 
 }
