@@ -48,9 +48,7 @@ public class SpalshScreenActivity extends Activity {
 
 			if (result == true) {
 				// Start KhanFragmentActivity
-				Intent ide = new Intent();
-				ide.setClassName(getPackageName(), getPackageName()
-						+ ".activity.KhanFragmentActivity");
+				Intent ide = new Intent(SpalshScreenActivity.this, LoginActivity.class);
 				startActivity(ide);
 				// finish existing activity
 				finish();
