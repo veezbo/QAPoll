@@ -8,7 +8,7 @@ public class LoginActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.spalsh_screen);
+		setContentView(R.layout.login);
 
 	}
 
