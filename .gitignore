@@ -1,3 +1,16 @@
+# built application files #
+###########################
+*.apk
+*.ap_
+
+# files for the dex VM #
+########################
+*.dex
+
+# Java class files #
+####################
+*.class
+
 # generated files #
 ###################
 bin/
@@ -14,12 +27,3 @@ local.properties
 .classpath
 .project
 .settings
-
-# Java class files #
-####################
-*.class
-
-# built application files #
-###########################
-*.apk
-*.ap_
