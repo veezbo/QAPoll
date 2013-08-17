@@ -1,46 +1,54 @@
 package com.anony.minions.qapoll.adapters;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.anony.minions.qapoll.R;
+import com.anony.minions.qapoll.data.Question;
 
-public class QuestionListAdapter extends ArrayAdapter<String> {
-	  private final Context context;
-	  private final String[] values;
+public class QuestionListAdapter extends ArrayAdapter<Question> {
+	private final Context context;
+	private final ArrayList<Question> values;
 
-	  public QuestionListAdapter(Context context, String[] values) {
-	    super(context, R.layout.rowlayout, values);
-	    this.context = context;
-	    this.values = values;
-	  }
+	public QuestionListAdapter(Context context, Question[] values) {
+		super(context, R.layout.rowlayout, values);
+		this.context = context;
+		this.values = new ArrayList<Question>(Arrays.asList(values));
+	}
 
-	  @Override
-	  public View getView(int position, View convertView, ViewGroup parent) {
-	    LayoutInflater inflater = (LayoutInflater) context
-	        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	    
-	    View rowView = convertView;
-	    if(rowView == null){
-	    	inflater.inflate(R.layout.rowlayout, parent, false);
-	    	
-	    }
-	   /* TextView textView = (TextView) rowView.findViewById(R.id.label);
-	    ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
-	    textView.setText(values[position]);
-	    // Change the icon for Windows and iPhone
-	    String s = values[position];
-	    if (s.startsWith("iPhone")) {
-	      imageView.setImageResource(R.drawable.no);
-	    } else {
-	      imageView.setImageResource(R.drawable.ok);
-	    }*/
+	public void deleteQuestion(int position) {
+		values.remove(position);
+		notifyDataSetChanged();
+	}
 
-	    return rowView;
-	  }
-	} 
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		LayoutInflater inflater = (LayoutInflater) context
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+		View rowView = convertView;
+		if (rowView == null) {
+			inflater.inflate(R.layout.rowlayout, parent, false);
+
+		}
+		TextView numOfVotes = (TextView) parent
+				.findViewById(R.id.numer_of_votes);
+		TextView rank = (TextView) parent.findViewById(R.id.question_rank);
+		TextView title = (TextView) parent.findViewById(R.id.question_title);
+		TextView preview = (TextView) parent.findViewById(R.id.QuestionPreview);
+		//TODO hardcode for now
+		numOfVotes.setText("100");
+		rank.setText("1");
+		title.setText("What is UDP???");
+		preview.setText("More Detailed Explanation");
+
+		return rowView;
+	}
+}
