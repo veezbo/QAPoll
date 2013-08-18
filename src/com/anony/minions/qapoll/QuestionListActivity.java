@@ -1,5 +1,8 @@
 package com.anony.minions.qapoll;
 
+import java.io.File;
+import java.util.ArrayList;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -41,13 +44,12 @@ public class QuestionListActivity extends Activity {
 
 	QuestionListAdapter adapter;
 
-	public String id;
+	public String userId;
 
 	private String room;
 	boolean isStudent;
 
 	private ChordApiService mChordService = null;
-
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,17 +60,14 @@ public class QuestionListActivity extends Activity {
 		String identity = i.getStringExtra(Constants.USER);
 		if (identity.equals(Constants.STUDENT)) {
 			isStudent = true;
-			id = i.getStringExtra(Constants.ID);
-		}else{
-			id="instructor";
 		}
+		userId = i.getStringExtra(Constants.ID);
 		room = i.getStringExtra(Constants.ROOM);
 		Log.i("identity", identity);
 
-		Question[] qs = new Question[] { new Question(3), new Question(4),
-				new Question(5) };// TODO pulling the list
+		Question[] qs = new Question[] {};// TODO pulling the list
 
-		adapter = new QuestionListAdapter(this, qs);
+		adapter = new QuestionListAdapter(userId, qs);
 
 		mChordService = QAPollChordManager
 				.getInstance(new ChordServiceListener());
@@ -125,7 +124,7 @@ public class QuestionListActivity extends Activity {
 				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 						final int position, long itemid) {
 					Log.d("delete question", "long press");
-					if (adapter.getItem(position).getOwnerId().equals(id)) {
+					if (adapter.getItem(position).getOwnerId().equals(userId)) {
 						new AlertDialog.Builder(QuestionListActivity.this)
 								.setTitle("Delete This Question")
 								.setMessage(
@@ -149,16 +148,24 @@ public class QuestionListActivity extends Activity {
 											}
 										}).show();
 						return true;
-					}else{
-						Toast.makeText(QuestionListActivity.this,"Not able to delete" , Toast.LENGTH_SHORT).show();
-					    return false;
+					} else {
+						Toast.makeText(QuestionListActivity.this,
+								"Not able to delete", Toast.LENGTH_SHORT)
+								.show();
+						return false;
 					}
 				}
 
 			});
 		}
-	
-}
+
+	}
+
+	@Override
+	public void onBackPressed() {
+		mChordService.leaveChannel();
+		super.onBackPressed();
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -190,7 +197,6 @@ public class QuestionListActivity extends Activity {
 	}
 
 	private void startQuiz() {
-		
 		String files[];
 		try {
 			files = getResources().getAssets().list("");
@@ -198,6 +204,7 @@ public class QuestionListActivity extends Activity {
 			e1.printStackTrace();
 			return;
 		}
+		
 		int count = 0;
 		ArrayList<String> txtFileNames = new ArrayList<String>();
 		for( String currFile : files ) {
@@ -206,14 +213,14 @@ public class QuestionListActivity extends Activity {
 				txtFileNames.add( currFile );
 			}
 		}
-		
-		if( count == 0 ) {
+
+		if (count == 0) {
 			// no quizzes exist
-			
 			return;
 		}
-		
-		//final String[] filenames=new String[] {"Turing Machine Quiz", "Graph Quiz", "Greedy Algo Quiz"};
+
+		// final String[] filenames=new String[] {"Turing Machine Quiz",
+		// "Graph Quiz", "Greedy Algo Quiz"};
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select A Quiz");
         final CharSequence[] filenames=(CharSequence[]) (txtFileNames.toArray(new String[txtFileNames.size()]));
@@ -225,44 +232,51 @@ public class QuestionListActivity extends Activity {
                 //Log.i("file path", file.getPath());
                 //Read text from file
                 StringBuilder text = new StringBuilder();
-
                 try {
                     BufferedReader br = new BufferedReader(new InputStreamReader( getAssets().open(filenames[item].toString()), "UTF-8"));
                     String line;
 
-                    while ((line = br.readLine()) != null) {
-                        text.append(line);
-                        text.append('\n');
-                    }
-                    
-                    new AlertDialog.Builder(QuestionListActivity.this)
-                    .setTitle("Quiz")
-                    .setMessage(text)
-                    .setPositiveButton("Send", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) { 
-                            // TODO broadcast
-                        	Toast.makeText(getApplicationContext(), "broadcast to student", Toast.LENGTH_SHORT).show();
-                        }
-                     })
-                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) { 
-                            // TODO broadcast
-                        	Toast.makeText(getApplicationContext(), "cancel", Toast.LENGTH_SHORT).show();
-                        dialog.dismiss();
-                        }
-                     }).show();
-                }
-                catch (IOException e) {
-                    //You'll need to add proper error handling here
-                }
+					while ((line = br.readLine()) != null) {
+						text.append(line);
+						text.append('\n');
+					}
 
-               
-           }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
+					new AlertDialog.Builder(QuestionListActivity.this)
+							.setTitle("Quiz")
+							.setMessage(text)
+							.setPositiveButton("Send",
+									new DialogInterface.OnClickListener() {
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+											// TODO broadcast
+											Toast.makeText(
+													getApplicationContext(),
+													"broadcast to student",
+													Toast.LENGTH_SHORT).show();
+										}
+									})
+							.setNegativeButton("Cancel",
+									new DialogInterface.OnClickListener() {
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+											// TODO broadcast
+											Toast.makeText(
+													getApplicationContext(),
+													"cancel",
+													Toast.LENGTH_SHORT).show();
+											dialog.dismiss();
+										}
+									}).show();
+				} catch (IOException e) {
+					// You'll need to add proper error handling here
+				}
 
-
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.show();
 
 	}
 
@@ -313,7 +327,7 @@ public class QuestionListActivity extends Activity {
 								return;
 							}
 							// question is ready for posting
-							Question question = new Question(t, q, id);
+							Question question = new Question(t, q, userId);
 							adapter.addQuestion(question);
 							if (mChordService != null && q != null) {
 
@@ -339,7 +353,8 @@ public class QuestionListActivity extends Activity {
 								// e.printStackTrace();
 								// }
 
-								mChordService.sendDataToAll(room, Question.toString(question).getBytes());
+								mChordService.sendDataToAll(room, Question
+										.toString(question).getBytes());
 							}
 							ad.dismiss();
 						}
@@ -367,10 +382,12 @@ public class QuestionListActivity extends Activity {
 			// e.printStackTrace();
 			// }
 			// if (question != null) {
-//			Toast.makeText(QuestionListActivity.this,
-//					"Channel : " + channel + " message : " + message,
-//					Toast.LENGTH_LONG).show();
-			adapter.addQuestion(Question.fromString(message));
+			// Toast.makeText(QuestionListActivity.this,
+			// "Channel : " + channel + " message : " + message,
+			// Toast.LENGTH_LONG).show();
+			Question question = Question.fromString(message);
+			Log.d(TAG, "Receiving question with id " + question.getId());
+			adapter.addQuestion(question);
 			// }
 		}
 
@@ -398,7 +415,24 @@ public class QuestionListActivity extends Activity {
 		@Override
 		public void onNodeEvent(String node, String channel, boolean bJoined) {
 			// TODO Auto-generated method stub
-
+			Log.d(TAG, "onNodeEvent");
+			if (bJoined && channel.equals(room) && !isStudent) {
+				Toast.makeText(
+						getApplicationContext(),
+						"channel: " + channel + ", new node: " + node
+								+ ", current node: "
+								+ mChordService.getNodeName(),
+						Toast.LENGTH_LONG).show();
+				Log.d(TAG, "onNodeEvent joined");
+				for (Question q : adapter.getAllQuestions()) {
+					Log.d(TAG,
+							"sending question id: " + q.getId() + ", title: "
+									+ q.getTitle() + ", text: " + q.getText()
+									+ ", votes: " + q.getVotes());
+					mChordService.sendData(room, Question.toString(q)
+							.getBytes(), node);
+				}
+			}
 		}
 
 		@Override
