@@ -12,6 +12,7 @@
         android:textSize="24sp" />
 
     <EditText
+        android:id="@+id/instructor_new_room"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter here"
