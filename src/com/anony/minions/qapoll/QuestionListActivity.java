@@ -3,6 +3,7 @@ package com.anony.minions.qapoll;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 
 import java.io.IOException;
 
@@ -189,21 +190,20 @@ public class QuestionListActivity extends Activity {
 	}
 
 	private void startQuiz() {
-
-		final File f = new File(Environment.getExternalStorageDirectory() + "/QA_poll_quizzes");
-		if( !f.isDirectory() ) {
-			// no quizzes exist
-			
+		
+		String files[];
+		try {
+			files = getResources().getAssets().list("");
+		} catch (IOException e1) {
+			e1.printStackTrace();
 			return;
 		}
-		
-		File files[] = f.listFiles();
 		int count = 0;
 		ArrayList<String> txtFileNames = new ArrayList<String>();
-		for( File currFile : files ) {
-			if( currFile.getName().endsWith(".txt") ) {
+		for( String currFile : files ) {
+			if( currFile.endsWith(".txt") ) {
 				count++;
-				txtFileNames.add( currFile.getName() );
+				txtFileNames.add( currFile );
 			}
 		}
 		
@@ -211,10 +211,6 @@ public class QuestionListActivity extends Activity {
 			// no quizzes exist
 			
 			return;
-		}
-		
-		for( String currFileName : txtFileNames ) {
-			
 		}
 		
 		//final String[] filenames=new String[] {"Turing Machine Quiz", "Graph Quiz", "Greedy Algo Quiz"};
@@ -225,13 +221,13 @@ public class QuestionListActivity extends Activity {
         builder.setItems(filenames, new DialogInterface.OnClickListener() {
            public void onClick(DialogInterface dialog, int item) {
                 Toast.makeText(getApplicationContext(), filenames[item], Toast.LENGTH_SHORT).show();
-                File file=new File(f.getAbsolutePath()+"/"+filenames[item]);
-                Log.i("file path", file.getPath());
+                //File file=new File(f.getAbsolutePath()+"/"+filenames[item]);
+                //Log.i("file path", file.getPath());
                 //Read text from file
                 StringBuilder text = new StringBuilder();
 
                 try {
-                    BufferedReader br = new BufferedReader(new FileReader(file));
+                    BufferedReader br = new BufferedReader(new InputStreamReader( getAssets().open(filenames[item].toString()), "UTF-8"));
                     String line;
 
                     while ((line = br.readLine()) != null) {
