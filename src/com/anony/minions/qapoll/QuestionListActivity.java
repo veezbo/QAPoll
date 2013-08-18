@@ -1,13 +1,7 @@
 package com.anony.minions.qapoll;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -30,10 +24,6 @@ import com.anony.minions.qapoll.adapters.QuestionListAdapter;
 import com.anony.minions.qapoll.data.Question;
 import com.anony.minions.qapoll.service.ChordApiService;
 import com.anony.minions.qapoll.service.ChordApiService.IChordServiceListener;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.samsung.chord.IChordChannel;
 
 public class QuestionListActivity extends Activity {
@@ -42,13 +32,12 @@ public class QuestionListActivity extends Activity {
 
 	QuestionListAdapter adapter;
 
-	public String id;
+	public String userId;
 
 	private String room;
 	boolean isStudent;
 
 	private ChordApiService mChordService = null;
-
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,15 +48,14 @@ public class QuestionListActivity extends Activity {
 		String identity = i.getStringExtra(Constants.USER);
 		if (identity.equals(Constants.STUDENT)) {
 			isStudent = true;
-			id = i.getStringExtra(Constants.ID);
 		}
+		userId = i.getStringExtra(Constants.ID);
 		room = i.getStringExtra(Constants.ROOM);
 		Log.i("identity", identity);
 
-		Question[] qs = new Question[] { new Question(3), new Question(4),
-				new Question(5) };// TODO pulling the list
+		Question[] qs = new Question[] {};// TODO pulling the list
 
-		adapter = new QuestionListAdapter(this, qs);
+		adapter = new QuestionListAdapter(userId, qs);
 
 		mChordService = QAPollChordManager
 				.getInstance(new ChordServiceListener());
@@ -124,8 +112,11 @@ public class QuestionListActivity extends Activity {
 				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 						final int position, long id) {
 					Log.d("delete question", "long press");
-					if ((int)id == QuestionListActivity.this.id.hashCode()) {
-						Log.i("hashcode", ""+QuestionListActivity.this.id.hashCode() );
+					if ((int) id == QuestionListActivity.this.userId.hashCode()) {
+						Log.i("hashcode",
+								""
+										+ QuestionListActivity.this.userId
+												.hashCode());
 						new AlertDialog.Builder(QuestionListActivity.this)
 								.setTitle("Delete This Question")
 								.setMessage(
@@ -149,16 +140,18 @@ public class QuestionListActivity extends Activity {
 											}
 										}).show();
 						return true;
-					}else{
-						Toast.makeText(QuestionListActivity.this,"Not able to delete" , Toast.LENGTH_SHORT).show();
-					    return false;
+					} else {
+						Toast.makeText(QuestionListActivity.this,
+								"Not able to delete", Toast.LENGTH_SHORT)
+								.show();
+						return false;
 					}
 				}
 
 			});
 		}
-	
-}
+
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -190,31 +183,32 @@ public class QuestionListActivity extends Activity {
 	}
 
 	private void startQuiz() {
-		File f = new File(Environment.getExternalStorageDirectory() + "/QA_poll_quizzes");
-		if( !f.isDirectory() ) {
+		File f = new File(Environment.getExternalStorageDirectory()
+				+ "/QA_poll_quizzes");
+		if (!f.isDirectory()) {
 			// no quizzes exist
-			
+
 			return;
 		}
-		
+
 		File files[] = f.listFiles();
 		int count = 0;
 		ArrayList<String> txtFileNames = new ArrayList<String>();
-		for( File currFile : files ) {
-			if( currFile.getName().endsWith(".txt") ) {
+		for (File currFile : files) {
+			if (currFile.getName().endsWith(".txt")) {
 				count++;
-				txtFileNames.add( currFile.getName() );
+				txtFileNames.add(currFile.getName());
 			}
 		}
-		
-		if( count == 0 ) {
+
+		if (count == 0) {
 			// no quizzes exist
-			
+
 			return;
 		}
-		
-		for( String currFileName : txtFileNames ) {
-			
+
+		for (String currFileName : txtFileNames) {
+
 		}
 	}
 
@@ -291,7 +285,8 @@ public class QuestionListActivity extends Activity {
 								// e.printStackTrace();
 								// }
 
-								mChordService.sendDataToAll(room, Question.toString(question).getBytes());
+								mChordService.sendDataToAll(room, Question
+										.toString(question).getBytes());
 							}
 							ad.dismiss();
 						}
@@ -319,11 +314,11 @@ public class QuestionListActivity extends Activity {
 			// e.printStackTrace();
 			// }
 			// if (question != null) {
-//			Toast.makeText(QuestionListActivity.this,
-//					"Channel : " + channel + " message : " + message,
-//					Toast.LENGTH_LONG).show();
+			// Toast.makeText(QuestionListActivity.this,
+			// "Channel : " + channel + " message : " + message,
+			// Toast.LENGTH_LONG).show();
 			Question question = Question.fromString(message);
-			Log.d(TAG,"Receiving question with id "+question.getId());
+			Log.d(TAG, "Receiving question with id " + question.getId());
 			adapter.addQuestion(question);
 			// }
 		}
@@ -352,12 +347,22 @@ public class QuestionListActivity extends Activity {
 		@Override
 		public void onNodeEvent(String node, String channel, boolean bJoined) {
 			// TODO Auto-generated method stub
-			Log.d(TAG,"onNodeEvent");
-			if(bJoined) {
-				Log.d(TAG,"onNodeEvent joined");
-				for(Question q : adapter.getAllQuestions()) {
-					Log.d(TAG,"sending question id: "+q.getId()+", title: "+q.getTitle()+", text: "+q.getText()+", votes: "+q.getVotes());
-					mChordService.sendData(room, Question.toString(q).getBytes(),node);
+			Log.d(TAG, "onNodeEvent");
+			if (bJoined && channel.equals(room) && !isStudent) {
+				Toast.makeText(
+						getApplicationContext(),
+						"channel: " + channel + ", new node: " + node
+								+ ", current node: "
+								+ mChordService.getNodeName(),
+						Toast.LENGTH_LONG).show();
+				Log.d(TAG, "onNodeEvent joined");
+				for (Question q : adapter.getAllQuestions()) {
+					Log.d(TAG,
+							"sending question id: " + q.getId() + ", title: "
+									+ q.getTitle() + ", text: " + q.getText()
+									+ ", votes: " + q.getVotes());
+					mChordService.sendData(room, Question.toString(q)
+							.getBytes(), node);
 				}
 			}
 		}
