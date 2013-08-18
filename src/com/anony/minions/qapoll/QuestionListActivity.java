@@ -15,17 +15,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.anony.minions.qapoll.adapters.QuestionListAdapter;
-import com.anony.minions.qapoll.data.Instructor;
 import com.anony.minions.qapoll.data.Question;
-import com.anony.minions.qapoll.data.User;
 import com.anony.minions.qapoll.service.ChordApiService;
 import com.anony.minions.qapoll.service.ChordApiService.ChordServiceBinder;
 import com.anony.minions.qapoll.service.ChordApiService.IChordServiceListener;
@@ -271,7 +267,7 @@ public class QuestionListActivity extends Activity {
 								return;
 							}
 							// question is ready for posting
-							Question question = new Question(t, q);
+							Question question = new Question(t, q, id);
 							adapter.addQuestion(question);
 							ad.dismiss();
 						}

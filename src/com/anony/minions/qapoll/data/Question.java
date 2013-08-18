@@ -8,8 +8,8 @@ public class Question extends QAObject {
 	String text;
 	private User owner;
 	public Question() {}
-	public Question(String title, String text){
-		id=incr++;
+	public Question(String title, String text, String id){
+		this.id = id.hashCode();
 		votes=0;
 		this.title = title;
 		this.text = text;
