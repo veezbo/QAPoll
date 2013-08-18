@@ -15,31 +15,32 @@ public class Question extends QAObject {
 	@JsonProperty("text")
 	private String text;
 
-
 	private String ownerId;
 	private boolean isChecked;
-	
+
 	public Question(String title, String text, String userid) {
 
 		this.id = incr++;
-		ownerId=userid;
+		ownerId = userid;
 		votes = 0;
 		this.title = title;
 		this.text = text;
 	}
 
-	public Question(int votestest) {
-		id = incr++;
-		votes = votestest;
-		this.title = "sampleTitle";
-		this.setText("sampleText");
-		ownerId="bleh";
+	public Question(String title, String text, String userId, int qid) {
+		this.id = qid;
+		ownerId = userId;
+		votes = 0;
+		this.title = title;
+		this.text = text;
+		incr++;
 	}
-	
-	public void setOwnerId(String userId){
-		ownerId=userId;
+
+	public void setOwnerId(String userId) {
+		ownerId = userId;
 	}
-	public String getOwnerId(){
+
+	public String getOwnerId() {
 		return ownerId;
 	}
 
@@ -97,6 +98,7 @@ public class Question extends QAObject {
 	public static String toString(Question q) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(q.id + QUESTION_SEPARATOR);
+		sb.append(q.ownerId + QUESTION_SEPARATOR);
 		sb.append(q.votes + QUESTION_SEPARATOR);
 		sb.append(q.title + QUESTION_SEPARATOR);
 		sb.append(q.text + QUESTION_SEPARATOR);
@@ -105,12 +107,13 @@ public class Question extends QAObject {
 
 	public static Question fromString(String s) {
 		StringTokenizer t = new StringTokenizer(s, QUESTION_SEPARATOR);
-		String id = t.nextToken();
+		int qid = Integer.parseInt(t.nextToken());
+		String oId = t.nextToken();
 		int votes = Integer.parseInt(t.nextToken());
 		String title = t.nextToken();
 		String text = t.nextToken();
 
-		Question q = new Question(title, text, id);
+		Question q = new Question(title, text, oId, qid);
 		q.setVotes(votes);
 		return q;
 	}
