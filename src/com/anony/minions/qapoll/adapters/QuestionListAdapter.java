@@ -2,13 +2,16 @@ package com.anony.minions.qapoll.adapters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.anony.minions.qapoll.R;
@@ -22,15 +25,22 @@ public class QuestionListAdapter extends BaseAdapter {
 		super();
 		this.context = context;
 		this.values = new ArrayList<Question>(Arrays.asList(values));
+		Collections.sort(this.values, new QuestionComparator());
 	}
 
 	public void deleteQuestion(int position) {
 		values.remove(position);
 		notifyDataSetChanged();
 	}
+	public void addQuestion(Question q){
+		values.add(q);
+		//sort it
+		Collections.sort(values, new QuestionComparator());
+		notifyDataSetChanged();
+	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView( int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -39,16 +49,31 @@ public class QuestionListAdapter extends BaseAdapter {
 			rowView=inflater.inflate(R.layout.rowlayout, parent, false);
 
 		}
+		final Question q=values.get(position);
 		TextView numOfVotes = (TextView) rowView
 				.findViewById(R.id.numer_of_votes);
 		TextView rank = (TextView) rowView.findViewById(R.id.question_rank);
 		TextView title = (TextView) rowView.findViewById(R.id.question_title);
 		TextView preview = (TextView) rowView.findViewById(R.id.QuestionPreview);
-		ImageButton upvote=(ImageButton)rowView.findViewById(R.id.imageButton1);
+		ImageView upvote=(ImageView)rowView.findViewById(R.id.imageButton1);
 		upvote.setContentDescription(""+position);
+		upvote.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View view) {
+				//Toast.makeText(context, "ImageView clicked for the row = "+view.getContentDescription(), Toast.LENGTH_SHORT).show();
+	
+				
+				q.incrVote();
+				Collections.sort(values, new QuestionComparator());
+				QuestionListAdapter.this.notifyDataSetChanged();
+				
+			}
+			
+		});
 		//TODO hardcode for now
-		numOfVotes.setText("100");
-		rank.setText("1");
+		numOfVotes.setText(""+q.getVotes());
+		rank.setText(""+(position+1));
 		title.setText("What is UDP???");
 		preview.setText("More Detailed Explanation");
 
@@ -71,5 +96,19 @@ public class QuestionListAdapter extends BaseAdapter {
 	public long getItemId(int position) {
 		// TODO change it to real id later
 		return values.get(position).getId();
+	}
+	public class QuestionComparator implements Comparator<Question> {
+	  
+
+		@Override
+		public int compare(Question lhs, Question rhs) {
+			if(lhs.getVotes() == rhs.getVotes()){
+			return 0;
+			}else if(lhs.getVotes() < rhs.getVotes()){
+				return 1;
+			}else{
+				return -1;
+			}
+		}
 	}
 }

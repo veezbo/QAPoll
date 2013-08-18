@@ -20,7 +20,7 @@ import com.anony.minions.qapoll.data.Question;
 public class QuestionListActivity extends Activity {
 	QuestionListAdapter adapter;
 	String id;
-	boolean isStudent;
+	boolean isStudent=false;
 	String room;
 
 	@Override
@@ -44,7 +44,7 @@ public class QuestionListActivity extends Activity {
 			isStudent=false;
 		}*/
 		
-		Question[] qs=new Question[]{new Question(), new Question(), new Question() };// TODO  pulling the list
+		Question[] qs=new Question[]{new Question(3), new Question(4), new Question(5) };// TODO  pulling the list
 		adapter=new QuestionListAdapter(this, qs );
 	    ListView ls=(ListView)findViewById(R.id.question_list);
 		ls.setAdapter(adapter);
@@ -67,7 +67,6 @@ public class QuestionListActivity extends Activity {
 				            // continue with delete
 				        	   //TODO delete from the values.
 				        adapter.deleteQuestion(position);
-				        	dialog.dismiss();
 				        }
 				     })
 				    .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -122,13 +121,5 @@ public class QuestionListActivity extends Activity {
 		
 	}
 	
-	public void upVoteQuestion(View view){
-		ImageButton button=(ImageButton) view;
-		int position=Integer.parseInt(button.getContentDescription().toString());
-		Question q=adapter.getItem(position);
-		q.incrVote();
-		adapter.notifyDataSetChanged();
-		
-	}
-
+	
 }

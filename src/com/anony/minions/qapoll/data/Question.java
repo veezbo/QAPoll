@@ -8,6 +8,9 @@ public class Question extends QAObject {
 		id=incr++;
 		votes=0;
 	}
+	public Question(int votestest){
+		votes=votestest;
+	}
 	public int getVotes() {
 		return votes;
 	}
