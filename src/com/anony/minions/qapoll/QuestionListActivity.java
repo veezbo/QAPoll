@@ -262,7 +262,7 @@ public class QuestionListActivity extends Activity {
 						text.append(line);
 						text.append('\n');
 					}
-
+					final String textToString = text.toString();
 					new AlertDialog.Builder(QuestionListActivity.this)
 							.setTitle("Quiz")
 							.setMessage(text)
@@ -272,6 +272,7 @@ public class QuestionListActivity extends Activity {
 												DialogInterface dialog,
 												int which) {
 											// TODO broadcast
+											mChordService.sendDataToAll(room, ("quiz: "+textToString).getBytes());
 											Toast.makeText(
 													getApplicationContext(),
 													"broadcast to student",
@@ -481,6 +482,8 @@ public class QuestionListActivity extends Activity {
 						finish();
 					}
 				}
+			} else if (message.contains("quiz:")) {
+				
 			} else {
 				Question question = Question.fromString(message);
 				Log.d(TAG, "Receiving question with id " + question.getId());
