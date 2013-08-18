@@ -5,16 +5,17 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnLongClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import com.anony.minions.qapoll.adapters.QuestionListAdapter;
 import com.anony.minions.qapoll.data.Question;
 import com.anony.minions.qapoll.data.User;
-import com.anony.minions.qapoll.data.Student;
 
 public class QuestionListActivity extends Activity {
 	QuestionListAdapter adapter;
@@ -27,25 +28,30 @@ public class QuestionListActivity extends Activity {
 		setContentView(R.layout.activity_qustion_list);
 		Intent i=getIntent();
 	    //identi=i.getStringExtra("Identity");
-		user=(User)getIntent().getExtras().getParcelable("User");
+		/*user=(User)getIntent().getExtras().getParcelable("User");
 		if(user instanceof Student){
 			isStudent=true;
 			
 		}else{
 			isStudent=false;
-		}
+		}*/
+		isStudent=false;
 		Question[] qs=new Question[3];// TODO  pulling the list
 		adapter=new QuestionListAdapter(this, qs );
-		ListView ls=(ListView)findViewById(R.id.question_list);
+		final ListView ls=(ListView)findViewById(R.id.question_list);
 		ls.setAdapter(adapter);
 		
 		if(!isStudent){
 			
-			ls.setOnLongClickListener(new OnLongClickListener(){
+			ls.setOnItemLongClickListener(new OnItemLongClickListener(){
+
+				
 
 				@Override
-				public boolean onLongClick(View v) {
-					//TODO delete box
+				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+						final int position, long id) {
+					// TODO Auto-generated method stub
+					Log.d("delete question", "long press");
 					new AlertDialog.Builder(QuestionListActivity.this)
 				    .setTitle("Delete This Question")
 				    .setMessage("Are you sure you want to delete this question?")
@@ -53,7 +59,7 @@ public class QuestionListActivity extends Activity {
 				        public void onClick(DialogInterface dialog, int which) { 
 				            // continue with delete
 				        	   //TODO delete from the values.
-				        	adapter.deleteQuestion(which);
+				        adapter.deleteQuestion(position);
 				        	dialog.dismiss();
 				        }
 				     })
