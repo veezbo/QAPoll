@@ -15,6 +15,7 @@ public class Question extends QAObject {
 	@JsonProperty("text")
 	private String text;
 
+
 	
 	private String ownerId;
 	
@@ -99,8 +100,9 @@ public class Question extends QAObject {
 	public void setText(String text) {
 		this.text = text;
 	}
-	
+
 	public static final String QUESTION_SEPARATOR = "\r\n";
+
 	public static String toString(Question q) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(q.id + QUESTION_SEPARATOR);
@@ -109,22 +111,34 @@ public class Question extends QAObject {
 		sb.append(q.text + QUESTION_SEPARATOR);
 		return sb.toString();
 	}
-	
+
 	public static Question fromString(String s) {
 		StringTokenizer t = new StringTokenizer(s, QUESTION_SEPARATOR);
 		int id = Integer.parseInt(t.nextToken());
 		int votes = Integer.parseInt(t.nextToken());
 		String title = t.nextToken();
 		String text = t.nextToken();
-		
+
 		Question q = new Question(title, text);
 		q.setId(id);
 		q.setVotes(votes);
 		return q;
 	}
+
 	public void decVote() {
 		this.votes--;
 	}
-	
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (o != null && o instanceof Question) {
+			return ((Question) o).getId() == getId();
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return getId();
+	}
 }

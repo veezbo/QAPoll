@@ -221,7 +221,7 @@ public class QuestionListActivity extends Activity {
 		//final String[] filenames=new String[] {"Turing Machine Quiz", "Graph Quiz", "Greedy Algo Quiz"};
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select A Quiz");
-        final CharSequence[] filenames=(CharSequence[]) txtFileNames.toArray();
+        final CharSequence[] filenames=(CharSequence[]) (txtFileNames.toArray(new String[txtFileNames.size()]));
         //builder.setI
         builder.setItems(filenames, new DialogInterface.OnClickListener() {
            public void onClick(DialogInterface dialog, int item) {
@@ -243,10 +243,17 @@ public class QuestionListActivity extends Activity {
                     new AlertDialog.Builder(QuestionListActivity.this)
                     .setTitle("Quiz")
                     .setMessage(text)
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    .setPositiveButton("Send", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) { 
                             // TODO broadcast
                         	Toast.makeText(getApplicationContext(), "broadcast to student", Toast.LENGTH_SHORT).show();
+                        }
+                     })
+                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) { 
+                            // TODO broadcast
+                        	Toast.makeText(getApplicationContext(), "cancel", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
                         }
                      }).show();
                 }
