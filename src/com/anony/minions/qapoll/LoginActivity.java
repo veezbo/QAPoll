@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -158,6 +159,27 @@ public class LoginActivity extends Activity {
 				.setNegativeButton( getResources().getString(R.string.alert_cancel), negativeListener )
 				.create();
 
+				//
+				SharedPreferences prefs = (LoginActivity.this).getSharedPreferences(
+						"com.anony.minions.qapoll", Context.MODE_PRIVATE);
+				String isStoredPath = "com.anony.minions.qapoll.isStored";
+				boolean isStored = prefs.getBoolean( isStoredPath, false );
+				
+				if( !isStored ) {
+					String storedUserPath = "com.anony.minions.qapoll.user";
+					String storedPassPath = "com.anony.minions.qapoll.pass";
+					
+					String storedUser = prefs.getString( storedUserPath,  "userDefault" );
+					String storedPass = prefs.getString( storedPassPath,  "passDefault" );
+					
+					EditText user = (EditText) viewStudent.findViewById(R.id.username);
+					EditText pass = (EditText) viewStudent.findViewById(R.id.password);
+					
+					user.setText(storedUser);
+					pass.setText(storedPass);
+				}
+				//
+				
 				ad.show();
 
 				ad.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(
@@ -195,7 +217,15 @@ public class LoginActivity extends Activity {
 									ad.dismiss();
 									User newUser = new Student();
 									newUser.setId(u);
+									
+									// save user, pass
+									SharedPreferences prefs = (LoginActivity.this).getSharedPreferences(
+											"com.anony.minions.qapoll", Context.MODE_PRIVATE);
+									prefs.edit().putBoolean( "com.anony.minions.qapoll.isStored", true );
+									prefs.edit().putString( "com.anony.minions.qapoll.user", u ).commit();
+									prefs.edit().putString( "com.anony.minions.qapoll.pass", p ).commit();
 
+									// move to next screen with credentials
 									Intent i = new Intent( LoginActivity.this, QuestionListActivity.class );
 									i.putExtra(Constants.USER, Constants.STUDENT);
 									i.putExtra(Constants.ID, u);
