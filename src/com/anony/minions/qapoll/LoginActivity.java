@@ -63,7 +63,7 @@ public class LoginActivity extends Activity {
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
 						Intent i = new Intent(LoginActivity.this,
-								QustionListActivity.class);
+								QuestionListActivity.class);
 						startActivity(i);
 					}
 				};
@@ -103,7 +103,7 @@ public class LoginActivity extends Activity {
 
 						// connection ready to go
 						Intent i = new Intent(LoginActivity.this,
-								QustionListActivity.class);
+								QuestionListActivity.class);
 						startActivity(i);
 					}
 				};

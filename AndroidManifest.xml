@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.anony.minions.qapoll.QustionListActivity"
+            android:name="com.anony.minions.qapoll.QuestionListActivity"
             android:label="@string/title_activity_qustion_list" >
         </activity>
         <activity
