@@ -3,6 +3,7 @@ package com.anony.minions.qapoll.data;
 public abstract class User {
 
 	private String _id;
+	
 
 	public String getId() {
 		return this._id;

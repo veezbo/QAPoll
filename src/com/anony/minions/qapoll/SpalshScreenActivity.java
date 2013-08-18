@@ -1,5 +1,8 @@
 package com.anony.minions.qapoll;
 
+import com.anony.minions.qapoll.database.DatabaseHolder;
+import com.anony.minions.qapoll.database.DatabaseInitListener;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -31,6 +34,19 @@ public class SpalshScreenActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(String... params) {
 			try {
+
+				QAPollContextManager.setContext(getApplicationContext());
+				DatabaseHolder.init(new DatabaseInitListener() {
+
+					@Override
+					public void onInit() {
+					}
+
+					@Override
+					public void onError() {
+					}
+				});
+
 				Thread.sleep(3000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -48,7 +64,8 @@ public class SpalshScreenActivity extends Activity {
 
 			if (result == true) {
 				// Start KhanFragmentActivity
-				Intent ide = new Intent(SpalshScreenActivity.this, LoginActivity.class);
+				Intent ide = new Intent(SpalshScreenActivity.this,
+						LoginActivity.class);
 				startActivity(ide);
 				// finish existing activity
 				finish();

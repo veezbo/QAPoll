@@ -29,14 +29,25 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-          <activity android:name="com.anony.minions.qapoll.QustionListActivity"
-            android:label="@string/title_activity_qustion_list">    
-            </activity>
+        <activity
+            android:name="com.anony.minions.qapoll.QuestionListActivity"
+            android:label="@string/title_activity_qustion_list" >
+        </activity>
         <activity
             android:name="com.anony.minions.qapoll.LoginActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name" >
         </activity>
+
+        <service
+            android:name="com.anony.minions.qapoll.service.ChordApiService"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="com.anony.minions.qapoll.service.ChordApiService.SERVICE_START" />
+                <action android:name="com.anony.minions.qapoll.service.ChordApiService.SERVICE_STOP" />
+                <action android:name="com.anony.minions.qapoll.service.ChordApiService.SERVICE_BIND" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
