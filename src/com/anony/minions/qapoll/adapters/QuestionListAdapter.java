@@ -30,7 +30,7 @@ public class QuestionListAdapter extends BaseAdapter {
 	public QuestionListAdapter(Context context, Question[] values) {
 		super();
 		this.context = context;
-		id=((QuestionListActivity)context).id.hashCode();
+		id = ((QuestionListActivity) context).id.hashCode();
 		this.values = new ArrayList<Question>(Arrays.asList(values));
 		Collections.sort(this.values, new QuestionComparator());
 	}
@@ -39,62 +39,63 @@ public class QuestionListAdapter extends BaseAdapter {
 		values.remove(position);
 		notifyDataSetChanged();
 	}
-	public void addQuestion(Question q){
+
+	public void addQuestion(Question q) {
 		values.add(q);
-		//sort it
+		// sort it
 		Collections.sort(values, new QuestionComparator());
 		notifyDataSetChanged();
 	}
 
 	@Override
-	public View getView( int position, View convertView, ViewGroup parent) {
+	public View getView(int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		View rowView = convertView;
 		if (rowView == null) {
-			rowView=inflater.inflate(R.layout.rowlayout, parent, false);
-			
+			rowView = inflater.inflate(R.layout.rowlayout, parent, false);
 
 		}
-		
-		final Question q=values.get(position);
-		
-		if(this.id == q.getId()){
+
+		Question q = values.get(position);
+
+		if (this.id == q.getId()) {
 			rowView.setBackgroundColor(Color.parseColor("#1A000000"));
-		}else{
+		} else {
 			rowView.setBackgroundColor(Color.WHITE);
 		}
 		TextView numOfVotes = (TextView) rowView
 				.findViewById(R.id.numer_of_votes);
 		TextView rank = (TextView) rowView.findViewById(R.id.question_rank);
 		TextView title = (TextView) rowView.findViewById(R.id.question_title);
-		TextView preview = (TextView) rowView.findViewById(R.id.QuestionPreview);
-		CheckBox upvote=(CheckBox)rowView.findViewById(R.id.upvote_box);
-		upvote.setContentDescription(""+position);
-		upvote.setOnCheckedChangeListener(new OnCheckedChangeListener()
-		{
-		 
-
+		TextView preview = (TextView) rowView
+				.findViewById(R.id.QuestionPreview);
+		CheckBox upvote = (CheckBox) rowView.findViewById(R.id.upvote_box);
+		upvote.setTag(position);
+		upvote.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
-				if(isChecked){
-					q.incrVote();
-				 }else{
-					q.decVote();
-					
+				if (arg0.getTag() instanceof Integer) {
+					int pos = (Integer) arg0.getTag();
+					Question q = values.get(pos);
+					if (isChecked) {
+						q.incrVote();
+					} else {
+						q.decVote();
+
+					}
+					// q.toggleChecked();
+					Collections.sort(values, new QuestionComparator());
+					QuestionListAdapter.this.notifyDataSetChanged();
 				}
-				//q.toggleChecked();
-				Collections.sort(values, new QuestionComparator());
-				QuestionListAdapter.this.notifyDataSetChanged();
 			}
 		});
-		
-		
-		numOfVotes.setText( "" + q.getVotes() );
-		rank.setText( "" + (position + 1) );
-		title.setText( q.getTitle() );
-		preview.setText( q.getText() );
+
+		numOfVotes.setText("" + q.getVotes());
+		rank.setText("" + (position + 1));
+		title.setText(q.getTitle());
+		preview.setText(q.getText());
 
 		return rowView;
 	}
@@ -116,16 +117,16 @@ public class QuestionListAdapter extends BaseAdapter {
 		// TODO change it to real id later
 		return values.get(position).getId();
 	}
+
 	public class QuestionComparator implements Comparator<Question> {
-	  
 
 		@Override
 		public int compare(Question lhs, Question rhs) {
-			if(lhs.getVotes() == rhs.getVotes()){
-			return 0;
-			}else if(lhs.getVotes() < rhs.getVotes()){
+			if (lhs.getVotes() == rhs.getVotes()) {
+				return 0;
+			} else if (lhs.getVotes() < rhs.getVotes()) {
 				return 1;
-			}else{
+			} else {
 				return -1;
 			}
 		}
