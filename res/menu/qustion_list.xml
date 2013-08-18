@@ -8,12 +8,12 @@
     <item 
         android:id="@+id/start_quiz"
         android:showAsAction="always"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/exam"
         android:title="start a quiz!"/>
     <item 
         android:id="@+id/post_question"
         android:showAsAction="always"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/postquestion"
         android:title="post a question"/>
 
 </menu>
