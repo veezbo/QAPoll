@@ -1,8 +1,10 @@
 package com.anony.minions.qapoll;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +15,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -187,7 +190,32 @@ public class QuestionListActivity extends Activity {
 	}
 
 	private void startQuiz() {
-
+		File f = new File(Environment.getExternalStorageDirectory() + "/QA_poll_quizzes");
+		if( !f.isDirectory() ) {
+			// no quizzes exist
+			
+			return;
+		}
+		
+		File files[] = f.listFiles();
+		int count = 0;
+		ArrayList<String> txtFileNames = new ArrayList<String>();
+		for( File currFile : files ) {
+			if( currFile.getName().endsWith(".txt") ) {
+				count++;
+				txtFileNames.add( currFile.getName() );
+			}
+		}
+		
+		if( count == 0 ) {
+			// no quizzes exist
+			
+			return;
+		}
+		
+		for( String currFileName : txtFileNames ) {
+			
+		}
 	}
 
 	private void postQuestion() {
