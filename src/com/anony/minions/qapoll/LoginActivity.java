@@ -66,10 +66,6 @@ public class LoginActivity extends Activity {
 		bindChordService();
 		Button instructor = (Button) findViewById(R.id.instructor_login);
 		instructor.setOnClickListener(new OnClickListener() {
-
-			View viewInstructor = getLayoutInflater().inflate(
-					R.layout.create_room, null);
-
 			@Override
 			public void onClick(View arg0) {
 				DialogInterface.OnClickListener positiveListener = new DialogInterface.OnClickListener() {
@@ -88,6 +84,8 @@ public class LoginActivity extends Activity {
 					}
 				};
 
+				final View viewInstructor = getLayoutInflater().inflate(
+						R.layout.create_room, null);
 				final AlertDialog ad = new AlertDialog.Builder(
 						LoginActivity.this).setView(viewInstructor)
 						.setPositiveButton("Create", positiveListener)
@@ -116,10 +114,6 @@ public class LoginActivity extends Activity {
 										t.show();
 										return;
 									}
-									if( !validateUser() ) {
-										// message user info invalid
-										return;
-									}
 									if( !validateRoom() ) {
 										// message room invalid
 										return;
@@ -141,10 +135,6 @@ public class LoginActivity extends Activity {
 
 		Button student = (Button) findViewById(R.id.student_login);
 		student.setOnClickListener(new OnClickListener() {
-
-			View viewStudent = getLayoutInflater().inflate(R.layout.join_room,
-					null);
-
 			@Override
 			public void onClick(View arg0) {
 				DialogInterface.OnClickListener positiveListener = new DialogInterface.OnClickListener() {
@@ -160,6 +150,8 @@ public class LoginActivity extends Activity {
 					}
 				};
 
+				final View viewStudent = getLayoutInflater().inflate(R.layout.join_room,
+						null);
 				final AlertDialog ad = new AlertDialog.Builder( LoginActivity.this )
 				.setView(viewStudent)
 				.setPositiveButton( getResources().getString(R.string.in_alert_login), positiveListener )
@@ -282,9 +274,9 @@ public class LoginActivity extends Activity {
 		@Override
 		public void onNodeEvent(String node, String channel, boolean bJoined) {
 			// TODO Auto-generated method stub
-//			Toast.makeText(LoginActivity.this,
-//					"Channel : " + channel + " node : " + node,
-//					Toast.LENGTH_LONG).show();
+			//			Toast.makeText(LoginActivity.this,
+			//					"Channel : " + channel + " node : " + node,
+			//					Toast.LENGTH_LONG).show();
 		}
 
 		@Override
