@@ -7,8 +7,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.anony.minions.qapoll.R;
@@ -44,6 +44,8 @@ public class QuestionListAdapter extends BaseAdapter {
 		TextView rank = (TextView) rowView.findViewById(R.id.question_rank);
 		TextView title = (TextView) rowView.findViewById(R.id.question_title);
 		TextView preview = (TextView) rowView.findViewById(R.id.QuestionPreview);
+		ImageButton upvote=(ImageButton)rowView.findViewById(R.id.imageButton1);
+		upvote.setContentDescription(""+position);
 		//TODO hardcode for now
 		numOfVotes.setText("100");
 		rank.setText("1");
@@ -60,7 +62,7 @@ public class QuestionListAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public Object getItem(int position) {
+	public Question getItem(int position) {
 		// TODO Auto-generated method stub
 		return values.get(position);
 	}
@@ -68,6 +70,6 @@ public class QuestionListAdapter extends BaseAdapter {
 	@Override
 	public long getItemId(int position) {
 		// TODO change it to real id later
-		return position;
+		return values.get(position).getId();
 	}
 }

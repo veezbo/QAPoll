@@ -43,11 +43,11 @@
 
     <ImageButton
         android:id="@+id/imageButton1"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:background="@drawable/upvote"
-        android:onClick="upVoteQuestion" />
+        android:onClick="upVoteQuestion"/>
 
 </RelativeLayout>
