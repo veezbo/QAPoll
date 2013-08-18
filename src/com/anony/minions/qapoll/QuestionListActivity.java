@@ -19,6 +19,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Vibrator;
 
@@ -41,8 +42,11 @@ import android.widget.Toast;
 import com.anony.minions.qapoll.adapters.QuestionListAdapter;
 import com.anony.minions.qapoll.adapters.VoteChangeListener;
 import com.anony.minions.qapoll.data.Question;
+import com.anony.minions.qapoll.database.DatabaseHolder;
+import com.anony.minions.qapoll.database.DatabaseInitListener;
 import com.anony.minions.qapoll.service.ChordApiService;
 import com.anony.minions.qapoll.service.ChordApiService.IChordServiceListener;
+import com.immersion.uhl.Launcher;
 import com.samsung.chord.IChordChannel;
 
 public class QuestionListActivity extends Activity {
@@ -303,10 +307,39 @@ public class QuestionListActivity extends Activity {
 
 	}
 	
+	private class VibrateTransmissionTask extends AsyncTask<Integer, Integer, Boolean> {
+
+		@Override
+		protected void onPreExecute() {}
+
+		@Override
+		protected Boolean doInBackground(Integer... params) {
+			try {		
+				Thread.sleep(params[0]);
+				HapticLauncherManager.getInstance().stop();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			return true;
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... progress) {
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+		}
+
+	}
+	
 	public void showQuiz(String quiz){
-		Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-		// Vibrate for 500 milliseconds
-		v.vibrate(500);
+//		Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+//		// Vibrate for 500 milliseconds
+//		v.vibrate(500);
+		HapticLauncherManager.getInstance().play(Launcher.ENGINE4_100);
+		new VibrateTransmissionTask().execute(3000);
+		
 		
 		String[] lines=quiz.split("\n");
 		if (lines.length <1){
