@@ -338,8 +338,8 @@ public class QuestionListActivity extends Activity {
 				if(id == -1){
 					
 				}else{
-				RadioButton selected=(RadioButton)choices.getChildAt(id);
-				String answer=selected.getText().toString();
+					RadioButton selected=(RadioButton)choices.getChildAt(id);
+					String answer=selected.getText().toString();
 				}
 				
 			}
