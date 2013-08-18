@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -26,7 +29,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +55,7 @@ public class QuestionListActivity extends Activity {
 	 * Map<UserId, QuizAnswer>
 	 */
 	Map<String, String> quizAnswer = new HashMap<String, String>();
+	VibrateTransmissionTask quizeTimeoutTask = null;
 
 	private ChordApiService mChordService = null;
 
@@ -270,6 +273,7 @@ public class QuestionListActivity extends Activity {
 												DialogInterface dialog,
 												int which) {
 											quizAnswer.clear();
+											quizeTimeoutTask = null;
 											mChordService
 													.sendDataToAll(
 															room,
@@ -346,6 +350,28 @@ public class QuestionListActivity extends Activity {
 
 	}
 
+	public void showQuizResult() {
+		HashMap<String, Integer> answers = new HashMap<String, Integer>();
+		for (String key : this.quizAnswer.keySet()) {
+			if (answers.containsKey(quizAnswer.get(key))) {
+
+				answers.put(quizAnswer.get(key), answers.get(key) + 1);
+			} else {
+				answers.put(quizAnswer.get(key), 1);
+			}
+		}
+
+		List<String> answersArray = new LinkedList<String>();
+		for (Entry<String, Integer> e : answers.entrySet()) {
+			answersArray.add(e.getKey() + " : " + e.getValue());
+		}
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Quiz Result");
+		builder.setItems(answersArray.toArray(new String[answersArray.size()]),
+				null).create().show();
+	}
+
 	public void showQuiz(String quiz, long duration) {
 		String[] lines = quiz.split("\n");
 		if (lines.length < 1) {
@@ -379,7 +405,7 @@ public class QuestionListActivity extends Activity {
 				} else {
 					RadioButton selected = (RadioButton) choices
 							.findViewById(id);
-					String answer = selected.getText().toString();
+					String answer = (selected.getText().toString()).trim();
 					if (mChordService != null) {
 						mChordService.sendData(room, ("useranswer: userid:"
 								+ userId + " :answer:" + answer).getBytes(),
@@ -522,7 +548,18 @@ public class QuestionListActivity extends Activity {
 						userAnswer = token.substring(token.indexOf(":answer:")
 								+ ":answer:".length());
 					}
-					quizAnswer.put(userId, userAnswer);
+				}
+				quizAnswer.put(userId, userAnswer);
+				if (quizeTimeoutTask == null) {
+					quizeTimeoutTask = new VibrateTransmissionTask(
+							new QuizeTimeUpListener() {
+
+								@Override
+								public void onQuizTimedUp() {
+									showQuizResult();
+								}
+							});
+					quizeTimeoutTask.execute(10L * 1000);
 				}
 			} else if (message.contains("voteupdate:")) {
 				int questionId = -1;
@@ -544,10 +581,9 @@ public class QuestionListActivity extends Activity {
 				long instructorJoinTime = 0;
 				String[] tokens = message.split(" ");
 				for (String token : tokens) {
-					if (token.contains("instructorId:")) {
+					if (token.contains("nodeId:")) {
 						instructorNodeId = token.substring(token
-								.indexOf("instructorId:")
-								+ "instructorId:".length());
+								.indexOf("nodeId:") + "nodeId:".length());
 					} else if (token.contains(":time:")) {
 						instructorJoinTime = Long.parseLong(token
 								.substring(token.indexOf(":time:")
@@ -555,9 +591,6 @@ public class QuestionListActivity extends Activity {
 					}
 				}
 				if (instructorJoinTime < System.currentTimeMillis()) {
-					instructorNodeId = message.substring(message
-							.indexOf("instructorId:")
-							+ "instructorId:".length());
 					if (!isStudent) {
 						mChordService.leaveChannel();
 						finish();
@@ -607,9 +640,10 @@ public class QuestionListActivity extends Activity {
 			Log.d(TAG, "onNodeEvent");
 			if (channel.equals(room) && !isStudent) {
 				String nodeName = mChordService.getNodeName();
-				mChordService.sendData(room, ("instructorId: " + nodeName
-						+ " :time:" + System.currentTimeMillis()).getBytes(),
-						node);
+				mChordService
+						.sendData(room, ("instructorId: nodeId:" + nodeName
+								+ " :time:" + System.currentTimeMillis())
+								.getBytes(), node);
 
 			}
 			if (bJoined && channel.equals(room) && !isStudent) {
