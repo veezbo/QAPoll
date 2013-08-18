@@ -71,24 +71,35 @@ public class QuestionListAdapter extends BaseAdapter {
 		TextView title = (TextView) rowView.findViewById(R.id.question_title);
 		TextView preview = (TextView) rowView
 				.findViewById(R.id.QuestionPreview);
-		CheckBox upvote = (CheckBox) rowView.findViewById(R.id.upvote_box);
+		final CheckBox upvote = (CheckBox) rowView.findViewById(R.id.upvote_box);
 		upvote.setTag(position);
-		upvote.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		upvote.setChecked(q.isChecked());
+		upvote.setOnClickListener(new OnClickListener() {
+		
+
 			@Override
-			public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
-				if (arg0.getTag() instanceof Integer) {
-					int pos = (Integer) arg0.getTag();
+			public void onClick(View v) {
+				if (v.getTag() instanceof Integer) {
+					int pos = (Integer) v.getTag();
 					Question q = values.get(pos);
-					if (isChecked) {
-						q.incrVote();
-					} else {
+					if (q.isChecked()) {
 						q.decVote();
+						
+						
+					} else {
+						q.incrVote();
+						
 
 					}
+					
+					q.setChecked(!q.isChecked());
+					((CheckBox)v).setChecked(q.isChecked());
 					// q.toggleChecked();
 					Collections.sort(values, new QuestionComparator());
+					//upvote.setTag(values.indexOf(q));
 					QuestionListAdapter.this.notifyDataSetChanged();
 				}
+				
 			}
 		});
 

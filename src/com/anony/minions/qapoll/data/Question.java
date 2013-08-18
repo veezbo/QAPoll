@@ -18,6 +18,7 @@ public class Question extends QAObject {
 
 	
 	private String ownerId;
+	private boolean isChecked;
 	
 	public Question() {
 	}
@@ -141,5 +142,13 @@ public class Question extends QAObject {
 	@Override
 	public int hashCode() {
 		return getId();
+	}
+
+	public boolean isChecked() {
+		return isChecked;
+	}
+
+	public void setChecked(boolean isChecked) {
+		this.isChecked = isChecked;
 	}
 }
