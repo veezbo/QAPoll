@@ -1,5 +1,7 @@
 package com.anony.minions.qapoll.data;
 
+import java.util.StringTokenizer;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Question extends QAObject {
@@ -86,11 +88,26 @@ public class Question extends QAObject {
 		this.text = text;
 	}
 	
-	public final static String STRING_CONVERSION_INDICATOR = "QUESTION_TO_STRING";
-	@Override
-	public String toString() {
+	public static final String QUESTION_SEPARATOR = "\r\n";
+	public static String toString(Question q) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(STRING_CONVERSION_INDICATOR);
-		return "";
+		sb.append(q.id + QUESTION_SEPARATOR);
+		sb.append(q.votes + QUESTION_SEPARATOR);
+		sb.append(q.title + QUESTION_SEPARATOR);
+		sb.append(q.text + QUESTION_SEPARATOR);
+		return sb.toString();
+	}
+	
+	public static Question fromString(String s) {
+		StringTokenizer t = new StringTokenizer(s, QUESTION_SEPARATOR);
+		int id = Integer.parseInt(t.nextToken());
+		int votes = Integer.parseInt(t.nextToken());
+		String title = t.nextToken();
+		String text = t.nextToken();
+		
+		Question q = new Question(title, text);
+		q.setId(id);
+		q.setVotes(votes);
+		return q;
 	}
 }

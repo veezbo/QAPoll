@@ -220,7 +220,7 @@ public class QuestionListActivity extends Activity {
 								// e.printStackTrace();
 								// }
 
-								mChordService.sendDataToAll(room, q.getBytes());
+								mChordService.sendDataToAll(room, Question.toString(question).getBytes());
 							}
 							ad.dismiss();
 						}
@@ -248,9 +248,10 @@ public class QuestionListActivity extends Activity {
 			// e.printStackTrace();
 			// }
 			// if (question != null) {
-			Toast.makeText(QuestionListActivity.this,
-					"Channel : " + channel + " message : " + message,
-					Toast.LENGTH_LONG).show();
+//			Toast.makeText(QuestionListActivity.this,
+//					"Channel : " + channel + " message : " + message,
+//					Toast.LENGTH_LONG).show();
+			adapter.addQuestion(Question.fromString(message));
 			// }
 		}
 
