@@ -1,24 +1,41 @@
 package com.anony.minions.qapoll;
 
 import java.io.BufferedReader;
+
+import java.io.File;
+import java.io.FileReader;
+
 import java.io.IOException;
+
 import java.io.InputStreamReader;
+
 import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+
+import android.os.Environment;
+import android.os.Vibrator;
+
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anony.minions.qapoll.adapters.QuestionListAdapter;
@@ -187,6 +204,7 @@ public class QuestionListActivity extends Activity {
 		switch (item.getItemId()) {
 		case R.id.post_question:
 			postQuestion();
+			//showQuiz("1\n2,3,4\n4\n");
 			return true;
 		case R.id.start_quiz:
 			startQuiz();
@@ -283,6 +301,51 @@ public class QuestionListActivity extends Activity {
 		AlertDialog alert = builder.create();
 		alert.show();
 
+	}
+	
+	public void showQuiz(String quiz){
+		Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+		// Vibrate for 500 milliseconds
+		v.vibrate(500); 
+		
+		String[] lines=quiz.split("\n");
+		if (lines.length <1){
+			Log.e("exception", "invalid quiz question");
+			return;
+		}
+		
+		Dialog dialog=new Dialog(this);
+		dialog.setContentView(R.layout.quiz_popup_layout);
+		dialog.setTitle("QUIZ");
+		TextView question=(TextView) dialog.findViewById(R.id.quiz_question);
+		final RadioGroup choices=(RadioGroup)dialog.findViewById(R.id.quiz_choices);
+		question.setText(lines[0]);
+		String[] multiples=lines[1].split(",");
+		for(String s: multiples){
+			RadioButton button=new RadioButton(this);
+			button.setText(s);
+			choices.addView(button);	
+		}
+		//choices.check((RadioButton)choices.getChildAt(0)).getId());
+		Button submit=(Button)dialog.findViewById(R.id.submitQuizButton);
+		submit.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO submit answer to instructor
+				
+				int id=choices.getCheckedRadioButtonId();
+				if(id == -1){
+					
+				}else{
+				RadioButton selected=(RadioButton)choices.getChildAt(id);
+				String answer=selected.getText().toString();
+				}
+				
+			}
+			
+		});
+		dialog.show();
 	}
 
 	private void postQuestion() {
@@ -501,5 +564,6 @@ public class QuestionListActivity extends Activity {
 		}
 
 	}
+	
 
 }
