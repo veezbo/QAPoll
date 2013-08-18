@@ -28,12 +28,12 @@ public class QuestionListActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_qustion_list);
 		Intent i=getIntent();
-		String identity=i.getStringExtra("user");
-		if(identity.equals("student")){
+		String identity=i.getStringExtra(Constants.USER);
+		if(identity.equals(Constants.STUDENT)){
 			isStudent=true;
-			id=i.getStringExtra("id");
+			id=i.getStringExtra(Constants.ID);
 		}
-		room=i.getStringExtra("room");
+		room=i.getStringExtra(Constants.ROOM);
 		Log.i("identity", identity);
 	    //identi=i.getStringExtra("Identity");
 		/*user=(User)getIntent().getExtras().getParcelable("User");
@@ -45,6 +45,7 @@ public class QuestionListActivity extends Activity {
 		}*/
 		
 		Question[] qs=new Question[]{new Question(3), new Question(4), new Question(5) };// TODO  pulling the list
+
 		adapter=new QuestionListAdapter(this, qs );
 	    ListView ls=(ListView)findViewById(R.id.question_list);
 		ls.setAdapter(adapter);

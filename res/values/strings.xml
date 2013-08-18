@@ -5,5 +5,10 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_qustion_list">QustionListActivity</string>
+    <string name="in_alert_please_enter_room">Please enter a room name.</string>
+    <string name="in_alert_room_taken">Room name taken. Please choose another.</string>
+    <string name="in_alert_login">Login</string>
+    <string name="alert_cancel">Cancel</string>
+    <string name="st_alert_complete_fields">Please complete each field before continuing.</string>
 
 </resources>

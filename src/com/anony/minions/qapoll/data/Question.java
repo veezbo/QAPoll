@@ -4,9 +4,15 @@ public class Question extends QAObject {
 	static int incr=0; 
 	int id;
 	int votes;
-	public Question(){
+	String title;
+	String text;
+	private User owner;
+	public Question() {}
+	public Question(String title, String text){
 		id=incr++;
 		votes=0;
+		this.title = title;
+		this.text = text;
 	}
 	public Question(int votestest){
 		votes=votestest;
@@ -34,5 +40,11 @@ public class Question extends QAObject {
 
 	public void setId(int newid){
 		id=newid;
+	}
+	public String getText() {
+		return text;
+	}
+	public User getOwner() {
+		return owner;
 	}
 }
