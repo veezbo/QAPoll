@@ -36,7 +36,7 @@ public class Question extends QAObject {
 		ownerId="bleh";
 	}
 	
-	public void setOwerId(String userId){
+	public void setOwnerId(String userId){
 		ownerId=userId;
 	}
 	public String getOwnerId(){
