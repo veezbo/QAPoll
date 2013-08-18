@@ -191,8 +191,11 @@ public class QuestionListActivity extends Activity {
 
 	@Override
 	public void onBackPressed() {
-		mChordService.leaveChannel();
 		super.onBackPressed();
+		if (!isStudent) {
+			mChordService.sendDataToAll(room, "EVERYONE_LEAVE".getBytes());
+		}
+		mChordService.leaveChannel();
 	}
 
 	@Override
@@ -546,7 +549,11 @@ public class QuestionListActivity extends Activity {
 			// Toast.makeText(QuestionListActivity.this,
 			// "Channel : " + channel + " message : " + message,
 			// Toast.LENGTH_LONG).show();
-			if (message.contains("useranswer:") && !isStudent) {
+			if (message.equals("EVERYONE_LEAVE")) {
+				mChordService.leaveChannel();
+				HapticLauncherManager.getInstance().play(Launcher.EXPLOSION1);
+				finish();
+			} else if (message.contains("useranswer:") && !isStudent) {
 				String userId = "";
 				String userAnswer = "";
 				String[] tokens = message.split(" ");
