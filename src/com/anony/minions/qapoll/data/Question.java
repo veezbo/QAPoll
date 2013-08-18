@@ -43,6 +43,7 @@ public class Question extends QAObject {
 		votes = votestest;
 		this.title = "sampleTitle";
 		this.setText("sampleText");
+		ownerId="bleh";
 	}
 	
 	public void setOwerId(String userId){

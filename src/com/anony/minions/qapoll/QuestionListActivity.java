@@ -122,10 +122,9 @@ public class QuestionListActivity extends Activity {
 
 				@Override
 				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-						final int position, long id) {
+						final int position, long itemid) {
 					Log.d("delete question", "long press");
-					if ((int)id == QuestionListActivity.this.id.hashCode()) {
-						Log.i("hashcode", ""+QuestionListActivity.this.id.hashCode() );
+					if (adapter.getItem(position).getOwnerId().equals(id)) {
 						new AlertDialog.Builder(QuestionListActivity.this)
 								.setTitle("Delete This Question")
 								.setMessage(
