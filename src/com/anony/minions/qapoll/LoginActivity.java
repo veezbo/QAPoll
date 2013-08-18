@@ -111,40 +111,34 @@ public class LoginActivity extends Activity {
 											.findViewById(R.id.instructor_new_room);
 									String r = room.getText().toString();
 
-									if (r.length() == 0) {
-										String message = "Please enter a room name.";
-										Toast t = Toast.makeText(
-												LoginActivity.this, message,
-												Toast.LENGTH_SHORT);
+									if( r.length() == 0 ) {
+										String message = getResources().getString(R.string.in_alert_please_enter_room);
+										Toast t = Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT);
 										t.show();
 										return;
 									}
-									if (!roomAvailable(r)) {
-										String message = "Room name taken. Please choose another.";
-										Toast t = Toast.makeText(
-												LoginActivity.this, message,
-												Toast.LENGTH_SHORT);
+									if( !roomAvailable(r) ) {
+										String message = getResources().getString(R.string.in_alert_room_taken);
+										Toast t = Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT);
 										t.show();
 										return;
 									}
-									if (!validateUser()) {
+									if( !validateUser() ) {
 										// message user info invalid
 										return;
 									}
-									if (!validateRoom()) {
+									if( !validateRoom() ) {
 										// message room invalid
 										return;
 									}
-
 									// connection is ready to go
 									ad.dismiss();
 									User newUser = new Instructor();
-									newUser.setId("instructor");
+									newUser.setId(Constants.INSTRUCTOR);
 
-									Intent i = new Intent(LoginActivity.this,
-											QuestionListActivity.class);
-									i.putExtra("user", "instructor");
-									i.putExtra("room", r);
+									Intent i = new Intent( LoginActivity.this, QuestionListActivity.class );
+									i.putExtra(Constants.USER, Constants.INSTRUCTOR);
+									i.putExtra(Constants.ROOM, r);
 									startActivity(i);
 								}
 							}
@@ -173,10 +167,11 @@ public class LoginActivity extends Activity {
 					}
 				};
 
-				final AlertDialog ad = new AlertDialog.Builder(
-						LoginActivity.this).setView(viewStudent)
-						.setPositiveButton("Login", positiveListener)
-						.setNegativeButton("Cancel", negativeListener).create();
+				final AlertDialog ad = new AlertDialog.Builder( LoginActivity.this )
+				.setView(viewStudent)
+				.setPositiveButton( getResources().getString(R.string.in_alert_login), positiveListener )
+				.setNegativeButton( getResources().getString(R.string.alert_cancel), negativeListener )
+				.create();
 
 				ad.show();
 
@@ -196,19 +191,17 @@ public class LoginActivity extends Activity {
 									String p = pass.getText().toString();
 									String r = room.getText().toString();
 
-									if (!formsFilled(u, p, r)) {
-										String message = "Please complete each field before continuing.";
-										Toast t = Toast.makeText(
-												LoginActivity.this, message,
-												Toast.LENGTH_SHORT);
+									if( !formsFilled( u, p, r ) ) {
+										String message = getResources().getString(R.string.st_alert_complete_fields);
+										Toast t = Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT);
 										t.show();
 										return;
 									}
-									if (!validateUser()) {
+									if( !validateUser() ) {
 										// message user info invalid
 										return;
 									}
-									if (!validateRoom()) {
+									if( !validateRoom() ) {
 										// message room invalid
 										return;
 									}
@@ -218,11 +211,10 @@ public class LoginActivity extends Activity {
 									User newUser = new Student();
 									newUser.setId(u);
 
-									Intent i = new Intent(LoginActivity.this,
-											QuestionListActivity.class);
-									i.putExtra("user", "student");
-									i.putExtra("id", u);
-									i.putExtra("room", r);
+									Intent i = new Intent( LoginActivity.this, QuestionListActivity.class );
+									i.putExtra(Constants.USER, Constants.STUDENT);
+									i.putExtra(Constants.ID, u);
+									i.putExtra(Constants.ROOM, r);
 									startActivity(i);
 								}
 							}
