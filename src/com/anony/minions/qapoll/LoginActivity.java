@@ -50,8 +50,8 @@ public class LoginActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);
 
-		//startService();
-		//bindChordService();
+		startService();
+		bindChordService();
 
 		Button instructor = (Button) findViewById(R.id.instructor_login);
 		instructor.setOnClickListener(new OnClickListener() {
