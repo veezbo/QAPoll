@@ -1,29 +1,19 @@
 package com.anony.minions.qapoll;
 
 import java.io.BufferedReader;
-
-import java.io.File;
-import java.io.FileReader;
-
 import java.io.IOException;
-
 import java.io.InputStreamReader;
-
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
-
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.os.Vibrator;
-
-
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,14 +26,13 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anony.minions.qapoll.adapters.QuestionListAdapter;
 import com.anony.minions.qapoll.adapters.VoteChangeListener;
 import com.anony.minions.qapoll.data.Question;
-import com.anony.minions.qapoll.database.DatabaseHolder;
-import com.anony.minions.qapoll.database.DatabaseInitListener;
 import com.anony.minions.qapoll.service.ChordApiService;
 import com.anony.minions.qapoll.service.ChordApiService.IChordServiceListener;
 import com.immersion.uhl.Launcher;
@@ -59,6 +48,11 @@ public class QuestionListActivity extends Activity {
 	private String instructorNodeId;
 	private String room;
 	boolean isStudent;
+
+	/**
+	 * Map<UserId, QuizAnswer>
+	 */
+	Map<String, String> quizAnswer = new HashMap<String, String>();
 
 	private ChordApiService mChordService = null;
 
@@ -208,7 +202,7 @@ public class QuestionListActivity extends Activity {
 		switch (item.getItemId()) {
 		case R.id.post_question:
 			postQuestion();
-			//showQuiz("1\n2,3,4\n4\n");
+			// showQuiz("1\n2,3,4\n4\n");
 			return true;
 		case R.id.start_quiz:
 			startQuiz();
@@ -275,8 +269,14 @@ public class QuestionListActivity extends Activity {
 										public void onClick(
 												DialogInterface dialog,
 												int which) {
-											// TODO broadcast
-											mChordService.sendDataToAll(room, ("quiz: "+textToString).getBytes());
+											quizAnswer.clear();
+											mChordService
+													.sendDataToAll(
+															room,
+															("quiz: text:"
+																	+ textToString
+																	+ " :duration:" + 10 * 1000)
+																	.getBytes());
 											Toast.makeText(
 													getApplicationContext(),
 													"broadcast to student",
@@ -306,17 +306,28 @@ public class QuestionListActivity extends Activity {
 		alert.show();
 
 	}
-	
-	private class VibrateTransmissionTask extends AsyncTask<Integer, Integer, Boolean> {
+
+	private interface QuizeTimeUpListener {
+		public void onQuizTimedUp();
+	}
+
+	private class VibrateTransmissionTask extends
+			AsyncTask<Long, Integer, Boolean> {
+
+		QuizeTimeUpListener mListener = null;
+
+		VibrateTransmissionTask(QuizeTimeUpListener listener) {
+			mListener = listener;
+		}
 
 		@Override
-		protected void onPreExecute() {}
+		protected void onPreExecute() {
+		}
 
 		@Override
-		protected Boolean doInBackground(Integer... params) {
-			try {		
+		protected Boolean doInBackground(Long... params) {
+			try {
 				Thread.sleep(params[0]);
-				HapticLauncherManager.getInstance().stop();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -329,56 +340,69 @@ public class QuestionListActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(Boolean result) {
+			if (mListener != null)
+				mListener.onQuizTimedUp();
 		}
 
 	}
-	
-	public void showQuiz(String quiz){
-//		Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-//		// Vibrate for 500 milliseconds
-//		v.vibrate(500);
-		HapticLauncherManager.getInstance().play(Launcher.ENGINE4_100);
-		new VibrateTransmissionTask().execute(3000);
-		
-		
-		String[] lines=quiz.split("\n");
-		if (lines.length <1){
+
+	public void showQuiz(String quiz, long duration) {
+		String[] lines = quiz.split("\n");
+		if (lines.length < 1) {
 			Log.e("exception", "invalid quiz question");
 			return;
 		}
-		
-		Dialog dialog=new Dialog(this);
+
+		final Dialog dialog = new Dialog(this);
 		dialog.setContentView(R.layout.quiz_popup_layout);
 		dialog.setTitle("QUIZ");
-		TextView question=(TextView) dialog.findViewById(R.id.quiz_question);
-		final RadioGroup choices=(RadioGroup)dialog.findViewById(R.id.quiz_choices);
+		TextView question = (TextView) dialog.findViewById(R.id.quiz_question);
+		final RadioGroup choices = (RadioGroup) dialog
+				.findViewById(R.id.quiz_choices);
 		question.setText(lines[0]);
-		String[] multiples=lines[1].split(",");
-		for(String s: multiples){
-			RadioButton button=new RadioButton(this);
+		String[] multiples = lines[1].split(",");
+		for (String s : multiples) {
+			RadioButton button = new RadioButton(this);
 			button.setText(s);
-			choices.addView(button);	
+			choices.addView(button);
 		}
-		//choices.check((RadioButton)choices.getChildAt(0)).getId());
-		Button submit=(Button)dialog.findViewById(R.id.submitQuizButton);
-		submit.setOnClickListener(new OnClickListener(){
+
+		Button submit = (Button) dialog.findViewById(R.id.submitQuizButton);
+		submit.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO submit answer to instructor
-				
-				int id=choices.getCheckedRadioButtonId();
-				if(id == -1){
-					
-				}else{
-					RadioButton selected=(RadioButton)choices.getChildAt(id);
-					String answer=selected.getText().toString();
+				int id = choices.getCheckedRadioButtonId();
+
+				if (id == -1) {
+
+				} else {
+					RadioButton selected = (RadioButton) choices
+							.findViewById(id);
+					String answer = selected.getText().toString();
+					if (mChordService != null) {
+						mChordService.sendData(room, ("useranswer: userid:"
+								+ userId + " :answer:" + answer).getBytes(),
+								instructorNodeId);
+						HapticLauncherManager.getInstance().stop();
+						dialog.dismiss();
+					}
 				}
-				
+
 			}
-			
+
 		});
 		dialog.show();
+
+		HapticLauncherManager.getInstance().play(Launcher.ENGINE4_100);
+		new VibrateTransmissionTask(new QuizeTimeUpListener() {
+
+			@Override
+			public void onQuizTimedUp() {
+				HapticLauncherManager.getInstance().stop();
+				dialog.dismiss();
+			}
+		}).execute(duration);
 	}
 
 	private void postQuestion() {
@@ -486,9 +510,23 @@ public class QuestionListActivity extends Activity {
 			// Toast.makeText(QuestionListActivity.this,
 			// "Channel : " + channel + " message : " + message,
 			// Toast.LENGTH_LONG).show();
-			int questionId = -1;
-			int voteCount = 0;
-			if (message.contains("voteupdate:")) {
+			if (message.contains("useranswer:") && !isStudent) {
+				String userId = "";
+				String userAnswer = "";
+				String[] tokens = message.split(" ");
+				for (String token : tokens) {
+					if (token.contains("id:")) {
+						userId = token.substring(token.indexOf("id:")
+								+ "id:".length());
+					} else if (token.contains(":answer:")) {
+						userAnswer = token.substring(token.indexOf(":answer:")
+								+ ":answer:".length());
+					}
+					quizAnswer.put(userId, userAnswer);
+				}
+			} else if (message.contains("voteupdate:")) {
+				int questionId = -1;
+				int voteCount = 0;
 				String[] tokens = message.split(" ");
 				for (String token : tokens) {
 					if (token.contains("id:")) {
@@ -503,9 +541,19 @@ public class QuestionListActivity extends Activity {
 					adapter.updateQuestionVotes(questionId, voteCount);
 				}
 			} else if (message.contains("instructorId:")) {
-				long instructorJoinTime = Long.parseLong(message
-						.substring(message.indexOf(":time:")
-								+ ":time:".length()));
+				long instructorJoinTime = 0;
+				String[] tokens = message.split(" ");
+				for (String token : tokens) {
+					if (token.contains("instructorId:")) {
+						instructorNodeId = token.substring(token
+								.indexOf("instructorId:")
+								+ "instructorId:".length());
+					} else if (token.contains(":time:")) {
+						instructorJoinTime = Long.parseLong(token
+								.substring(token.indexOf(":time:")
+										+ ":time:".length()));
+					}
+				}
 				if (instructorJoinTime < System.currentTimeMillis()) {
 					instructorNodeId = message.substring(message
 							.indexOf("instructorId:")
@@ -516,9 +564,11 @@ public class QuestionListActivity extends Activity {
 					}
 				}
 			} else if (message.contains("quiz:")) {
-				showQuiz(message
-						.substring(message.indexOf("quiz: ")
-								+ "quiz: ".length()));
+				String quizString = message.substring(message.indexOf("text:")
+						+ "text:".length(), message.indexOf(":duration:"));
+				long quizDuration = Long.parseLong(message.substring(message
+						.indexOf(":duration:") + ":duration:".length()));
+				showQuiz(quizString, quizDuration);
 			} else {
 				Question question = Question.fromString(message);
 				Log.d(TAG, "Receiving question with id " + question.getId());
@@ -556,8 +606,9 @@ public class QuestionListActivity extends Activity {
 			// TODO Auto-generated method stub
 			Log.d(TAG, "onNodeEvent");
 			if (channel.equals(room) && !isStudent) {
-				mChordService.sendData(room, ("instructorId:" + mChordService
-						+ ":time:" + System.currentTimeMillis()).getBytes(),
+				String nodeName = mChordService.getNodeName();
+				mChordService.sendData(room, ("instructorId: " + nodeName
+						+ " :time:" + System.currentTimeMillis()).getBytes(),
 						node);
 
 			}
@@ -599,6 +650,5 @@ public class QuestionListActivity extends Activity {
 		}
 
 	}
-	
 
 }

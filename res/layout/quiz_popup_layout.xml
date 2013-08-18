@@ -29,6 +29,6 @@
         android:layout_below="@+id/quiz_choices"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="32dp"
-        android:text="Button" />
+        android:text="Submit" />
 
 </RelativeLayout>
