@@ -1,34 +1,46 @@
 package com.anony.minions.qapoll.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Question extends QAObject {
-	static int incr=0; 
+	static int incr = 0;
+	@JsonProperty("id")
 	int id;
+	@JsonProperty("votes")
 	int votes;
+	@JsonProperty("title")
 	String title;
-	String text;
-	private User owner;
-	public Question() {}
-	public Question(String title, String text){
-		id=incr++;
-		votes=0;
-		this.title = title;
-		this.text = text;
+	@JsonProperty("text")
+	private String text;
+
+	public Question() {
 	}
-	public Question(int votestest){
+
+	public Question(String title, String text) {
 		id = incr++;
-		votes=votestest;
-		this.title = "sampleTitle";
-		this.text = "sampleText";
+		votes = 0;
+		this.title = title;
+		this.setText(text);
 	}
+
+	public Question(int votestest) {
+		id = incr++;
+		votes = votestest;
+		this.title = "sampleTitle";
+		this.setText("sampleText");
+	}
+
+	@JsonProperty("votes")
 	public int getVotes() {
 		return votes;
 	}
 
+	@JsonProperty("votes")
 	public void setVotes(int votes) {
 		this.votes = votes;
 	}
-	
-	public void incrVote(){
+
+	public void incrVote() {
 		this.votes++;
 	}
 
@@ -36,21 +48,34 @@ public class Question extends QAObject {
 	public QAObjectType getType() {
 		return QAObjectType.Question;
 	}
-	
-	public int getId(){
+
+	@JsonProperty("id")
+	public int getId() {
 		return id;
 	}
 
-	public void setId(int newid){
-		id=newid;
+	@JsonProperty("id")
+	public void setId(int newid) {
+		id = newid;
 	}
-	public String getText() {
-		return text;
-	}
+
+	@JsonProperty("title")
 	public String getTitle() {
 		return title;
 	}
-	public User getOwner() {
-		return owner;
+
+	@JsonProperty("title")
+	public void setTitle(String newTitle) {
+		title = newTitle;
+	}
+
+	@JsonProperty("text")
+	public String getText() {
+		return text;
+	}
+
+	@JsonProperty("text")
+	public void setText(String text) {
+		this.text = text;
 	}
 }
