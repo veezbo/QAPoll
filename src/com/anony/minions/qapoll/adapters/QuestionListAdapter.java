@@ -7,6 +7,7 @@ import java.util.Comparator;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,7 +27,8 @@ public class QuestionListAdapter extends BaseAdapter {
 	private final Context context;
 	private final ArrayList<Question> values;
 	private int id;
-
+	public static final String TAG = QuestionListAdapter.class.getSimpleName();
+	
 	public QuestionListAdapter(Context context, Question[] values) {
 		super();
 		this.context = context;
@@ -40,8 +42,21 @@ public class QuestionListAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
-	public void addQuestion(Question q) {
-		values.add(q);
+	public void addQuestion(Question question) {
+		for(Question q : values) {
+			if(question.getId()==q.getId()) {
+				Log.d(TAG,"Question already exists, id: "+q.getId()+", text: "+q.getText());
+				if(question.getVotes()!=q.getVotes()) {
+					Log.d(TAG,"Updating number of upvotes for id "+question.getId());
+					q.setVotes(question.getVotes());
+					Collections.sort(values, new QuestionComparator());
+					notifyDataSetChanged();
+				}
+				return;
+			}
+		}
+		Log.d(TAG,"adding question id: "+question.getId());
+		values.add(question);
 		// sort it
 		Collections.sort(values, new QuestionComparator());
 		notifyDataSetChanged();
@@ -117,7 +132,9 @@ public class QuestionListAdapter extends BaseAdapter {
 		// TODO change it to real id later
 		return values.get(position).getId();
 	}
-
+	public ArrayList<Question> getAllQuestions() {
+		return values;
+	}
 	public class QuestionComparator implements Comparator<Question> {
 
 		@Override

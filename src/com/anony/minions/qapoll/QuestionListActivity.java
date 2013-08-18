@@ -237,7 +237,7 @@ public class QuestionListActivity extends Activity {
 								return;
 							}
 							// question is ready for posting
-							Question question = new Question(t, q, id);
+							Question question = new Question(t, q);
 							adapter.addQuestion(question);
 							if (mChordService != null && q != null) {
 
@@ -294,7 +294,9 @@ public class QuestionListActivity extends Activity {
 //			Toast.makeText(QuestionListActivity.this,
 //					"Channel : " + channel + " message : " + message,
 //					Toast.LENGTH_LONG).show();
-			adapter.addQuestion(Question.fromString(message));
+			Question question = Question.fromString(message);
+			Log.d(TAG,"Receiving question with id "+question.getId());
+			adapter.addQuestion(question);
 			// }
 		}
 
@@ -322,7 +324,14 @@ public class QuestionListActivity extends Activity {
 		@Override
 		public void onNodeEvent(String node, String channel, boolean bJoined) {
 			// TODO Auto-generated method stub
-
+			Log.d(TAG,"onNodeEvent");
+			if(bJoined) {
+				Log.d(TAG,"onNodeEvent joined");
+				for(Question q : adapter.getAllQuestions()) {
+					Log.d(TAG,"sending question id: "+q.getId()+", title: "+q.getTitle()+", text: "+q.getText()+", votes: "+q.getVotes());
+					mChordService.sendData(room, Question.toString(q).getBytes(),node);
+				}
+			}
 		}
 
 		@Override
