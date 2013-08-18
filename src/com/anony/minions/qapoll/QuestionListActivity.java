@@ -220,7 +220,7 @@ public class QuestionListActivity extends Activity {
 								return;
 							}
 							// question is ready for posting
-							Question question = new Question(t, q);
+							Question question = new Question(t, q, id);
 							adapter.addQuestion(question);
 							ad.dismiss();
 						}
