@@ -1,11 +1,9 @@
 package com.anony.minions.qapoll;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -27,10 +25,6 @@ import com.anony.minions.qapoll.adapters.QuestionListAdapter;
 import com.anony.minions.qapoll.data.Question;
 import com.anony.minions.qapoll.service.ChordApiService;
 import com.anony.minions.qapoll.service.ChordApiService.IChordServiceListener;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.samsung.chord.IChordChannel;
 
 public class QuestionListActivity extends Activity {
@@ -187,6 +181,35 @@ public class QuestionListActivity extends Activity {
 	}
 
 	private void startQuiz() {
+		final String[] filenames=new String[] {"Turing Machine Quiz", "Graph Quiz", "Greedy Algo Quiz"};
+		AlertDialog.Builder builder = new AlertDialog.Builder(getParent());
+        builder.setTitle("Select A Quiz");
+        //builder.setI
+        builder.setItems(filenames, new DialogInterface.OnClickListener() {
+           public void onClick(DialogInterface dialog, int item) {
+                Toast.makeText(getApplicationContext(), filenames[item], Toast.LENGTH_SHORT).show();
+                File file=new File("");
+                //Read text from file
+                StringBuilder text = new StringBuilder();
+
+                try {
+                    BufferedReader br = new BufferedReader(new FileReader(file));
+                    String line;
+
+                    while ((line = br.readLine()) != null) {
+                        text.append(line);
+                        text.append('\n');
+                    }
+                }
+                catch (IOException e) {
+                    //You'll need to add proper error handling here
+                }
+
+               
+           }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
 
 	}
 
