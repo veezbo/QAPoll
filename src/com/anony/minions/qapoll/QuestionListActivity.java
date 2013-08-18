@@ -1,19 +1,12 @@
 package com.anony.minions.qapoll;
 
-import java.io.File;
-import java.util.ArrayList;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-
 import java.io.IOException;
-
-import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -44,7 +37,7 @@ public class QuestionListActivity extends Activity {
 	QuestionListAdapter adapter;
 
 	public String userId;
-
+	private String instructorNodeId;
 	private String room;
 	boolean isStudent;
 
@@ -394,9 +387,24 @@ public class QuestionListActivity extends Activity {
 			// Toast.makeText(QuestionListActivity.this,
 			// "Channel : " + channel + " message : " + message,
 			// Toast.LENGTH_LONG).show();
-			Question question = Question.fromString(message);
-			Log.d(TAG, "Receiving question with id " + question.getId());
-			adapter.addQuestion(question);
+			if (message.contains("instructorId:")) {
+				long instructorJoinTime = Long.parseLong(message
+						.substring(message.indexOf(":time:")
+								+ ":time:".length()));
+				if (instructorJoinTime < System.currentTimeMillis()) {
+					instructorNodeId = message.substring(message
+							.indexOf("instructorId:")
+							+ "instructorId:".length());
+					if (!isStudent) {
+						mChordService.leaveChannel();
+						finish();
+					}
+				}
+			} else {
+				Question question = Question.fromString(message);
+				Log.d(TAG, "Receiving question with id " + question.getId());
+				adapter.addQuestion(question);
+			}
 			// }
 		}
 
@@ -425,6 +433,12 @@ public class QuestionListActivity extends Activity {
 		public void onNodeEvent(String node, String channel, boolean bJoined) {
 			// TODO Auto-generated method stub
 			Log.d(TAG, "onNodeEvent");
+			if (channel.equals(room) && !isStudent) {
+				mChordService.sendData(room, ("instructorId:" + mChordService
+						+ ":time:" + System.currentTimeMillis()).getBytes(),
+						node);
+
+			}
 			if (bJoined && channel.equals(room) && !isStudent) {
 				Toast.makeText(
 						getApplicationContext(),
