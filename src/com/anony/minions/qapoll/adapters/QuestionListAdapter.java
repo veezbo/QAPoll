@@ -14,8 +14,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.anony.minions.qapoll.QAPollContextManager;
@@ -26,17 +24,30 @@ public class QuestionListAdapter extends BaseAdapter {
 	private final ArrayList<Question> values;
 	public static final String TAG = QuestionListAdapter.class.getSimpleName();
 	private String id;
+	VoteChangeListener mListener;
 
-	public QuestionListAdapter(String userId, Question[] values) {
+	public QuestionListAdapter(String userId, Question[] values,
+			VoteChangeListener listener) {
 		super();
 		id = userId;
 		this.values = new ArrayList<Question>(Arrays.asList(values));
 		Collections.sort(this.values, new QuestionComparator());
+		mListener = listener;
 	}
 
 	public void deleteQuestion(int position) {
 		values.remove(position);
 		notifyDataSetChanged();
+	}
+
+	public void updateQuestionVotes(int questionId, int newVotes) {
+		for (Question q : values) {
+			if (q.getId() == questionId) {
+				q.setVotes(newVotes);
+				Collections.sort(values, new QuestionComparator());
+				notifyDataSetChanged();
+			}
+		}
 	}
 
 	public void addQuestion(Question question) {
@@ -98,10 +109,12 @@ public class QuestionListAdapter extends BaseAdapter {
 					Question q = values.get(pos);
 					if (q.isChecked()) {
 						q.decVote();
-
+						if (mListener != null)
+							mListener.onVoteChanged(q, false);
 					} else {
 						q.incrVote();
-
+						if (mListener != null)
+							mListener.onVoteChanged(q, true);
 					}
 
 					q.setChecked(!q.isChecked());

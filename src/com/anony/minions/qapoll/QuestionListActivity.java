@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.anony.minions.qapoll.adapters.QuestionListAdapter;
+import com.anony.minions.qapoll.adapters.VoteChangeListener;
 import com.anony.minions.qapoll.data.Question;
 import com.anony.minions.qapoll.service.ChordApiService;
 import com.anony.minions.qapoll.service.ChordApiService.IChordServiceListener;
@@ -56,7 +57,17 @@ public class QuestionListActivity extends Activity {
 
 		Question[] qs = new Question[] {};// TODO pulling the list
 
-		adapter = new QuestionListAdapter(userId, qs);
+		adapter = new QuestionListAdapter(userId, qs, new VoteChangeListener() {
+
+			@Override
+			public void onVoteChanged(Question question, boolean up) {
+				if (mChordService != null) {
+					mChordService.sendDataToAll(room, ("voteupdate: id:"
+							+ question.getId() + " :vote:" + question
+							.getVotes()).getBytes());
+				}
+			}
+		});
 
 		mChordService = QAPollChordManager
 				.getInstance(new ChordServiceListener());
@@ -193,13 +204,13 @@ public class QuestionListActivity extends Activity {
 			e1.printStackTrace();
 			return;
 		}
-		
+
 		int count = 0;
 		ArrayList<String> txtFileNames = new ArrayList<String>();
-		for( String currFile : files ) {
-			if( currFile.endsWith(".txt") ) {
+		for (String currFile : files) {
+			if (currFile.endsWith(".txt")) {
 				count++;
-				txtFileNames.add( currFile );
+				txtFileNames.add(currFile);
 			}
 		}
 
@@ -211,19 +222,23 @@ public class QuestionListActivity extends Activity {
 		// final String[] filenames=new String[] {"Turing Machine Quiz",
 		// "Graph Quiz", "Greedy Algo Quiz"};
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Select A Quiz");
-        final CharSequence[] filenames=(CharSequence[]) (txtFileNames.toArray(new String[txtFileNames.size()]));
-        //builder.setI
-        builder.setItems(filenames, new DialogInterface.OnClickListener() {
-           public void onClick(DialogInterface dialog, int item) {
-                Toast.makeText(getApplicationContext(), filenames[item], Toast.LENGTH_SHORT).show();
-                //File file=new File(f.getAbsolutePath()+"/"+filenames[item]);
-                //Log.i("file path", file.getPath());
-                //Read text from file
-                StringBuilder text = new StringBuilder();
-                try {
-                    BufferedReader br = new BufferedReader(new InputStreamReader( getAssets().open(filenames[item].toString()), "UTF-8"));
-                    String line;
+		builder.setTitle("Select A Quiz");
+		final CharSequence[] filenames = (CharSequence[]) (txtFileNames
+				.toArray(new String[txtFileNames.size()]));
+		// builder.setI
+		builder.setItems(filenames, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int item) {
+				Toast.makeText(getApplicationContext(), filenames[item],
+						Toast.LENGTH_SHORT).show();
+				// File file=new File(f.getAbsolutePath()+"/"+filenames[item]);
+				// Log.i("file path", file.getPath());
+				// Read text from file
+				StringBuilder text = new StringBuilder();
+				try {
+					BufferedReader br = new BufferedReader(
+							new InputStreamReader(getAssets().open(
+									filenames[item].toString()), "UTF-8"));
+					String line;
 
 					while ((line = br.readLine()) != null) {
 						text.append(line);
@@ -374,7 +389,23 @@ public class QuestionListActivity extends Activity {
 			// Toast.makeText(QuestionListActivity.this,
 			// "Channel : " + channel + " message : " + message,
 			// Toast.LENGTH_LONG).show();
-			if (message.contains("instructorId:")) {
+			int questionId = -1;
+			int voteCount = 0;
+			if (message.contains("voteupdate:")) {
+				String[] tokens = message.split(" ");
+				for (String token : tokens) {
+					if (token.contains("id:")) {
+						questionId = Integer.parseInt(token.substring(token
+								.indexOf("id:") + "id:".length()));
+					} else if (token.contains(":vote:")) {
+						voteCount = Integer.parseInt(token.substring(token
+								.indexOf(":vote:") + ":vote:".length()));
+					}
+				}
+				if (adapter != null) {
+					adapter.updateQuestionVotes(questionId, voteCount);
+				}
+			} else if (message.contains("instructorId:")) {
 				long instructorJoinTime = Long.parseLong(message
 						.substring(message.indexOf(":time:")
 								+ ":time:".length()));
@@ -390,6 +421,9 @@ public class QuestionListActivity extends Activity {
 			} else {
 				Question question = Question.fromString(message);
 				Log.d(TAG, "Receiving question with id " + question.getId());
+				Toast.makeText(getApplicationContext(),
+						"Receiving question with id " + question.getId(),
+						Toast.LENGTH_LONG).show();
 				adapter.addQuestion(question);
 			}
 			// }
