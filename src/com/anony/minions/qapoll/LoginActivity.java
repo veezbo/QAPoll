@@ -3,15 +3,12 @@ package com.anony.minions.qapoll;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -21,50 +18,71 @@ import android.widget.Toast;
 import com.anony.minions.qapoll.data.Instructor;
 import com.anony.minions.qapoll.data.Student;
 import com.anony.minions.qapoll.data.User;
-import com.anony.minions.qapoll.service.ChordApiService;
-import com.anony.minions.qapoll.service.ChordApiService.ChordServiceBinder;
 import com.anony.minions.qapoll.service.ChordApiService.IChordServiceListener;
-import com.samsung.chord.ChordManager;
 
 public class LoginActivity extends Activity {
 
 	public static final String TAG = LoginActivity.class.getSimpleName();
-
-	// **********************************************************************
-	// Using Service
-	// **********************************************************************
-	private ChordApiService mChordService = null;
-
-	private ServiceConnection mConnection = new ServiceConnection() {
-
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			ChordServiceBinder binder = (ChordServiceBinder) service;
-			mChordService = binder.getService();
-			try {
-				mChordService.initialize(new ChordServiceListener());
-				int nError = mChordService
-						.start(ChordManager.INTERFACE_TYPE_WIFI);
-				if (nError == 0)
-					Log.d(TAG, "HI");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-			mChordService = null;
-		}
-	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);
 
-		startService();
-		bindChordService();
+		QAPollChordManager.getInstance(new IChordServiceListener() {
+			
+			@Override
+			public void onUpdateNodeInfo(String nodeName, String ipAddress) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onReceiveMessage(String node, String channel, String message) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onNodeEvent(String node, String channel, boolean bJoined) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onNetworkDisconnected() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onFileWillReceive(String node, String channel, String fileName,
+					String exchangeId) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onFileProgress(boolean bSend, String node, String channel,
+					int progress, String exchangeId) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onFileCompleted(int reason, String node, String channel,
+					String exchangeId, String fileName) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onConnectivityChanged() {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 		Button instructor = (Button) findViewById(R.id.instructor_login);
 		instructor.setOnClickListener(new OnClickListener() {
 			@Override
@@ -237,37 +255,6 @@ public class LoginActivity extends Activity {
 
 			}
 		});
-	}
-
-	public void bindChordService() {
-		if (mChordService == null) {
-			Intent intent = new Intent(Constants.BIND_SERVICE);
-			bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-		}
-	}
-
-	private void unbindChordService() {
-		if (null != mChordService) {
-			unbindService(mConnection);
-		}
-		mChordService = null;
-	}
-
-	private void startService() {
-		Intent intent = new Intent(Constants.START_SERVICE);
-		startService(intent);
-	}
-
-	private void stopService() {
-		Intent intent = new Intent(Constants.STOP_SERVICE);
-		stopService(intent);
-	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		unbindChordService();
-		stopService();
 	}
 
 	private class ChordServiceListener implements IChordServiceListener {
