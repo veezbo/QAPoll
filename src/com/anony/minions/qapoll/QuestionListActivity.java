@@ -355,7 +355,7 @@ public class QuestionListActivity extends Activity {
 		for (String key : this.quizAnswer.keySet()) {
 			if (answers.containsKey(quizAnswer.get(key))) {
 
-				answers.put(quizAnswer.get(key), answers.get(key) + 1);
+				answers.put(quizAnswer.get(key), answers.get(quizAnswer.get(key)) + 1);
 			} else {
 				answers.put(quizAnswer.get(key), 1);
 			}
