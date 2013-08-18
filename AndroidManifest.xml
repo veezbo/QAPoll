@@ -40,12 +40,12 @@
         </activity>
 
         <service
-            android:name="com.anony.minions.qapoll.service.ChordApiDemoService"
+            android:name="com.anony.minions.qapoll.service.ChordApiService"
             android:enabled="true" >
             <intent-filter>
-                <action android:name="com.samsung.chord.samples.apidemo.service.ChordApiDemoService.SERVICE_START" />
-                <action android:name="com.samsung.chord.samples.apidemo.service.ChordApiDemoService.SERVICE_STOP" />
-                <action android:name="com.samsung.chord.samples.apidemo.service.ChordApiDemoService.SERVICE_BIND" />
+                <action android:name="com.anony.minions.qapoll.service.ChordApiService.SERVICE_START" />
+                <action android:name="com.anony.minions.qapoll.service.ChordApiService.SERVICE_STOP" />
+                <action android:name="com.anony.minions.qapoll.service.ChordApiService.SERVICE_BIND" />
             </intent-filter>
         </service>
     </application>
