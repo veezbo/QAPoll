@@ -15,6 +15,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +30,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,7 +65,15 @@ public class QuestionListActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_qustion_list);
+		Drawable background = getResources().getDrawable(R.drawable.splash);
 
+		// setting the opacity (alpha)
+		background.setAlpha(40);
+		RelativeLayout whole=(RelativeLayout) findViewById(R.id.whole);
+		//whole.setAlpha(60);
+		whole.setBackgroundDrawable(background);
+		
+		
 		Intent i = getIntent();
 		String identity = i.getStringExtra(Constants.USER);
 		if (identity.equals(Constants.STUDENT)) {
