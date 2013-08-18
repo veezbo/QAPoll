@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-public class SpalshScreenActivity extends Activity {
+public class SplashScreenActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +64,7 @@ public class SpalshScreenActivity extends Activity {
 
 			if (result == true) {
 				// Start KhanFragmentActivity
-				Intent ide = new Intent(SpalshScreenActivity.this,
+				Intent ide = new Intent(SplashScreenActivity.this,
 						LoginActivity.class);
 				startActivity(ide);
 				// finish existing activity

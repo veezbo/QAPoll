@@ -9,13 +9,17 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.anony.minions.qapoll.service.ChordApiService;
 import com.anony.minions.qapoll.service.ChordApiService.ChordServiceBinder;
 import com.anony.minions.qapoll.service.ChordApiService.IChordServiceListener;
+import com.samsung.chord.ChordManager;
+import com.samsung.chord.IChordChannel;
 
 public class LoginActivity extends Activity {
 
@@ -34,6 +38,9 @@ public class LoginActivity extends Activity {
 			mChordService = binder.getService();
 			try {
 				mChordService.initialize(new ChordServiceListener());
+				int nError = mChordService.start(ChordManager.INTERFACE_TYPE_WIFI);
+				if(nError == 0)
+					Log.d(TAG, "HI");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -52,7 +59,6 @@ public class LoginActivity extends Activity {
 
 		startService();
 		bindChordService();
-
 		Button instructor = (Button) findViewById(R.id.instructor_login);
 		instructor.setOnClickListener(new OnClickListener() {
 
@@ -62,6 +68,13 @@ public class LoginActivity extends Activity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
+						if (mChordService != null) {
+							IChordChannel ch = mChordService
+									.joinChannel("testprivatechannel");
+							String hi = "HI";
+							mChordService.sendDataToAll("testprivatechannel",
+									hi.getBytes());
+						}
 						Intent i = new Intent(LoginActivity.this,
 								QuestionListActivity.class);
 						startActivity(i);
@@ -162,7 +175,9 @@ public class LoginActivity extends Activity {
 		@Override
 		public void onReceiveMessage(String node, String channel, String message) {
 			// TODO Auto-generated method stub
-
+			Toast.makeText(LoginActivity.this,
+					"Channel : " + channel + " message : " + message,
+					Toast.LENGTH_LONG).show();
 		}
 
 		@Override
