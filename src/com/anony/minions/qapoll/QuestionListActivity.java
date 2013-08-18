@@ -60,7 +60,7 @@ public class QuestionListActivity extends Activity {
 				            // continue with delete
 				        	   //TODO delete from the values.
 				        adapter.deleteQuestion(position);
-				        	dialog.dismiss();
+				        //	dialog.dismiss();
 				        }
 				     })
 				    .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -112,6 +112,10 @@ public class QuestionListActivity extends Activity {
 
 	private void postQuestion() {
 		// TODO Auto-generated method stub
+		
+	}
+	
+	public void upVoteQuestion(View view){
 		
 	}
 
