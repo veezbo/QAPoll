@@ -144,6 +144,7 @@ public class LoginActivity extends Activity {
 
 									Intent i = new Intent( LoginActivity.this, QuestionListActivity.class );
 									i.putExtra(Constants.USER, Constants.INSTRUCTOR);
+									i.putExtra(Constants.ID, Constants.INSTRUCTOR);
 									i.putExtra(Constants.ROOM, r);
 									startActivity(i);
 								}

@@ -15,13 +15,17 @@ public class Question extends QAObject {
 	@JsonProperty("text")
 	private String text;
 
-	private User owner;
 
-	public Question(String title, String text) {
-		id = incr++;
+	private String ownerId;
+	private boolean isChecked;
+	
+	public Question(String title, String text, String userid) {
+
+		this.id = incr++;
+		ownerId=userid;
 		votes = 0;
 		this.title = title;
-		this.setText(text);
+		this.text = text;
 	}
 
 	public Question(int votestest) {
@@ -29,6 +33,14 @@ public class Question extends QAObject {
 		votes = votestest;
 		this.title = "sampleTitle";
 		this.setText("sampleText");
+		ownerId="bleh";
+	}
+	
+	public void setOwerId(String userId){
+		ownerId=userId;
+	}
+	public String getOwnerId(){
+		return ownerId;
 	}
 
 	@JsonProperty("votes")
@@ -93,13 +105,12 @@ public class Question extends QAObject {
 
 	public static Question fromString(String s) {
 		StringTokenizer t = new StringTokenizer(s, QUESTION_SEPARATOR);
-		int id = Integer.parseInt(t.nextToken());
+		String id = t.nextToken();
 		int votes = Integer.parseInt(t.nextToken());
 		String title = t.nextToken();
 		String text = t.nextToken();
 
-		Question q = new Question(title, text);
-		q.setId(id);
+		Question q = new Question(title, text, id);
 		q.setVotes(votes);
 		return q;
 	}
@@ -119,5 +130,13 @@ public class Question extends QAObject {
 	@Override
 	public int hashCode() {
 		return getId();
+	}
+
+	public boolean isChecked() {
+		return isChecked;
+	}
+
+	public void setChecked(boolean isChecked) {
+		this.isChecked = isChecked;
 	}
 }

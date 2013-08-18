@@ -3,6 +3,17 @@ package com.anony.minions.qapoll;
 import java.io.File;
 import java.util.ArrayList;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+
+import java.io.IOException;
+
+import java.io.OutputStream;
+import java.util.ArrayList;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -110,13 +121,9 @@ public class QuestionListActivity extends Activity {
 
 				@Override
 				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-						final int position, long id) {
+						final int position, long itemid) {
 					Log.d("delete question", "long press");
-					if ((int) id == QuestionListActivity.this.userId.hashCode()) {
-						Log.i("hashcode",
-								""
-										+ QuestionListActivity.this.userId
-												.hashCode());
+					if (adapter.getItem(position).getOwnerId().equals(userId)) {
 						new AlertDialog.Builder(QuestionListActivity.this)
 								.setTitle("Delete This Question")
 								.setMessage(
@@ -154,6 +161,12 @@ public class QuestionListActivity extends Activity {
 	}
 
 	@Override
+	public void onBackPressed() {
+		mChordService.leaveChannel();
+		super.onBackPressed();
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.qustion_list, menu);
@@ -183,7 +196,7 @@ public class QuestionListActivity extends Activity {
 	}
 
 	private void startQuiz() {
-		File f = new File(Environment.getExternalStorageDirectory()
+		final File f = new File(Environment.getExternalStorageDirectory()
 				+ "/QA_poll_quizzes");
 		if (!f.isDirectory()) {
 			// no quizzes exist
@@ -210,6 +223,70 @@ public class QuestionListActivity extends Activity {
 		for (String currFileName : txtFileNames) {
 
 		}
+
+		// final String[] filenames=new String[] {"Turing Machine Quiz",
+		// "Graph Quiz", "Greedy Algo Quiz"};
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Select A Quiz");
+		final CharSequence[] filenames = (CharSequence[]) (txtFileNames
+				.toArray(new String[txtFileNames.size()]));
+		// builder.setI
+		builder.setItems(filenames, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int item) {
+				Toast.makeText(getApplicationContext(), filenames[item],
+						Toast.LENGTH_SHORT).show();
+				File file = new File(f.getAbsolutePath() + "/"
+						+ filenames[item]);
+				Log.i("file path", file.getPath());
+				// Read text from file
+				StringBuilder text = new StringBuilder();
+
+				try {
+					BufferedReader br = new BufferedReader(new FileReader(file));
+					String line;
+
+					while ((line = br.readLine()) != null) {
+						text.append(line);
+						text.append('\n');
+					}
+
+					new AlertDialog.Builder(QuestionListActivity.this)
+							.setTitle("Quiz")
+							.setMessage(text)
+							.setPositiveButton("Send",
+									new DialogInterface.OnClickListener() {
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+											// TODO broadcast
+											Toast.makeText(
+													getApplicationContext(),
+													"broadcast to student",
+													Toast.LENGTH_SHORT).show();
+										}
+									})
+							.setNegativeButton("Cancel",
+									new DialogInterface.OnClickListener() {
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+											// TODO broadcast
+											Toast.makeText(
+													getApplicationContext(),
+													"cancel",
+													Toast.LENGTH_SHORT).show();
+											dialog.dismiss();
+										}
+									}).show();
+				} catch (IOException e) {
+					// You'll need to add proper error handling here
+				}
+
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.show();
+
 	}
 
 	private void postQuestion() {
@@ -259,7 +336,7 @@ public class QuestionListActivity extends Activity {
 								return;
 							}
 							// question is ready for posting
-							Question question = new Question(t, q);
+							Question question = new Question(t, q, userId);
 							adapter.addQuestion(question);
 							if (mChordService != null && q != null) {
 
