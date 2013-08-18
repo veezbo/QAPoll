@@ -3,16 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="7dp" >
-
+	<View
+	android:id="@+id/separator"
+    android:layout_width="fill_parent"
+    android:layout_height="1dp"
+    android:layout_alignParentTop="true"
+    android:background="@android:color/darker_gray"/>
     <TextView
         android:id="@+id/question_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/separator"
         android:layout_marginLeft="75dp"
         android:layout_marginTop="16dp"
-        android:text="TextView"
+        android:text="title"
         android:textColor="@android:color/black" />
 
     <TextView
@@ -21,18 +26,9 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/question_title"
         android:layout_below="@+id/question_title"
-        android:layout_marginTop="19dp"
-        android:layout_marginBottom="20dp"
-        android:text="TextView"
-        android:textColor="@android:color/black" />
-
-    <TextView
-        android:id="@+id/question_rank"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/question_title"
-        android:text="rank 1"
+        android:layout_marginTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="preview"
         android:textColor="@android:color/black" />
 
     <TextView
@@ -41,19 +37,31 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/question_rank"
         android:layout_alignBottom="@+id/question_rank"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="62dp"
-        android:text="TextView"
+        android:layout_toLeftOf="@+id/upvote_box"
+        android:layout_marginRight="5dp"
+        android:text="votes"
         android:textColor="@android:color/black" />
 
     <CheckBox
         android:id="@+id/upvote_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/numer_of_votes"
+        android:layout_alignBottom="@+id/numer_of_votes"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/numer_of_votes"
-        android:text="like"
+        android:paddingRight="6dp"
+        android:clickable="true"
         android:focusable="false"
-        android:clickable="true" />
+        android:text="like" />
+
+    <TextView
+        android:id="@+id/question_rank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="9dp"
+        android:layout_below="@+id/question_title"
+        android:text="rank 1"
+        android:textColor="@android:color/black" />
 
 </RelativeLayout>
