@@ -15,7 +15,10 @@ public class Question extends QAObject {
 		this.text = text;
 	}
 	public Question(int votestest){
+		id = incr++;
 		votes=votestest;
+		this.title = "sampleTitle";
+		this.text = "sampleText";
 	}
 	public int getVotes() {
 		return votes;
@@ -43,6 +46,9 @@ public class Question extends QAObject {
 	}
 	public String getText() {
 		return text;
+	}
+	public String getTitle() {
+		return title;
 	}
 	public User getOwner() {
 		return owner;

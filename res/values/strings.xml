@@ -10,5 +10,6 @@
     <string name="in_alert_login">Login</string>
     <string name="alert_cancel">Cancel</string>
     <string name="st_alert_complete_fields">Please complete each field before continuing.</string>
+    <string name="st_alert_please_enter_question">Please complete each field before submitting this question.</string>
 
 </resources>

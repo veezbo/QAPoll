@@ -71,11 +71,11 @@ public class QuestionListAdapter extends BaseAdapter {
 			}
 			
 		});
-		//TODO hardcode for now
-		numOfVotes.setText(""+q.getVotes());
-		rank.setText(""+(position+1));
-		title.setText("What is UDP???");
-		preview.setText("More Detailed Explanation");
+		
+		numOfVotes.setText( "" + q.getVotes() );
+		rank.setText( "" + (position + 1) );
+		title.setText( q.getTitle() );
+		preview.setText( q.getText() );
 
 		return rowView;
 	}
