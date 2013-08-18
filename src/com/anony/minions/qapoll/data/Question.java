@@ -16,14 +16,15 @@ public class Question extends QAObject {
 	private String text;
 
 	
-	private User owner;
+	private String ownerId;
 	
 	public Question() {
 	}
 
-	public Question(String title, String text, String id) {
+	public Question(String title, String text, String userid) {
 
-		this.id = id.hashCode();
+		this.id = incr++;
+		ownerId=userid;
 		votes = 0;
 		this.title = title;
 		this.text = text;
@@ -41,6 +42,13 @@ public class Question extends QAObject {
 		votes = votestest;
 		this.title = "sampleTitle";
 		this.setText("sampleText");
+	}
+	
+	public void setOwerId(String userId){
+		ownerId=userId;
+	}
+	public String getOwnerId(){
+		return ownerId;
 	}
 
 	@JsonProperty("votes")

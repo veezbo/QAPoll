@@ -25,12 +25,12 @@ import com.anony.minions.qapoll.data.Question;
 public class QuestionListAdapter extends BaseAdapter {
 	private final Context context;
 	private final ArrayList<Question> values;
-	private int id;
+	private String id;
 
 	public QuestionListAdapter(Context context, Question[] values) {
 		super();
 		this.context = context;
-		id = ((QuestionListActivity) context).id.hashCode();
+		id = ((QuestionListActivity) context).id;
 		this.values = new ArrayList<Question>(Arrays.asList(values));
 		Collections.sort(this.values, new QuestionComparator());
 	}
@@ -60,7 +60,7 @@ public class QuestionListAdapter extends BaseAdapter {
 
 		Question q = values.get(position);
 
-		if (this.id == q.getId()) {
+		if (this.id.equals(q.getOwnerId())) {
 			rowView.setBackgroundColor(Color.parseColor("#1A000000"));
 		} else {
 			rowView.setBackgroundColor(Color.WHITE);
