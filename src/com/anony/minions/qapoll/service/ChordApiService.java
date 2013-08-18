@@ -550,6 +550,10 @@ public class ChordApiService extends Service {
 		}
 
 	}
+	
+    public String getNodeName() {
+    	return mChord.getName();
+    }
 
 	public String getPublicChannel() {
 		return ChordManager.PUBLIC_CHANNEL;

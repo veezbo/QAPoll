@@ -1,0 +1,4 @@
+Which animal, on average, lives the longest?
+Cow, Dolphin, Lizard, Salmon
+What is 2 + 2?
+0, 2, 4, 8

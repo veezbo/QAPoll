@@ -7,32 +7,32 @@ import java.util.Comparator;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.anony.minions.qapoll.QuestionListActivity;
+import com.anony.minions.qapoll.QAPollContextManager;
 import com.anony.minions.qapoll.R;
 import com.anony.minions.qapoll.data.Question;
 
 public class QuestionListAdapter extends BaseAdapter {
-	private final Context context;
 	private final ArrayList<Question> values;
+	public static final String TAG = QuestionListAdapter.class.getSimpleName();
 	private String id;
+	VoteChangeListener mListener;
 
-	public QuestionListAdapter(Context context, Question[] values) {
+	public QuestionListAdapter(String userId, Question[] values,
+			VoteChangeListener listener) {
 		super();
-		this.context = context;
-		id = ((QuestionListActivity) context).id;
+		id = userId;
 		this.values = new ArrayList<Question>(Arrays.asList(values));
 		Collections.sort(this.values, new QuestionComparator());
+		mListener = listener;
 	}
 
 	public void deleteQuestion(int position) {
@@ -40,8 +40,33 @@ public class QuestionListAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
-	public void addQuestion(Question q) {
-		values.add(q);
+	public void updateQuestionVotes(int questionId, int newVotes) {
+		for (Question q : values) {
+			if (q.getId() == questionId) {
+				q.setVotes(newVotes);
+				Collections.sort(values, new QuestionComparator());
+				notifyDataSetChanged();
+			}
+		}
+	}
+
+	public void addQuestion(Question question) {
+		int index = values.indexOf(question);
+		if (index != -1) {
+			Question q = values.get(index);
+			Log.d(TAG, "Question already exists, id: " + question.getId()
+					+ ", text: " + q.getText());
+			if (question.getVotes() != q.getVotes()) {
+				Log.d(TAG,
+						"Updating number of upvotes for id " + question.getId());
+				q.setVotes(question.getVotes());
+				Collections.sort(values, new QuestionComparator());
+				notifyDataSetChanged();
+			}
+			return;
+		}
+		Log.d(TAG, "adding question id: " + question.getId());
+		values.add(question);
 		// sort it
 		Collections.sort(values, new QuestionComparator());
 		notifyDataSetChanged();
@@ -49,8 +74,8 @@ public class QuestionListAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		LayoutInflater inflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		LayoutInflater inflater = (LayoutInflater) QAPollContextManager
+				.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		View rowView = convertView;
 		if (rowView == null) {
@@ -71,11 +96,11 @@ public class QuestionListAdapter extends BaseAdapter {
 		TextView title = (TextView) rowView.findViewById(R.id.question_title);
 		TextView preview = (TextView) rowView
 				.findViewById(R.id.QuestionPreview);
-		final CheckBox upvote = (CheckBox) rowView.findViewById(R.id.upvote_box);
+		final CheckBox upvote = (CheckBox) rowView
+				.findViewById(R.id.upvote_box);
 		upvote.setTag(position);
 		upvote.setChecked(q.isChecked());
 		upvote.setOnClickListener(new OnClickListener() {
-		
 
 			@Override
 			public void onClick(View v) {
@@ -84,22 +109,22 @@ public class QuestionListAdapter extends BaseAdapter {
 					Question q = values.get(pos);
 					if (q.isChecked()) {
 						q.decVote();
-						
-						
+						if (mListener != null)
+							mListener.onVoteChanged(q, false);
 					} else {
 						q.incrVote();
-						
-
+						if (mListener != null)
+							mListener.onVoteChanged(q, true);
 					}
-					
+
 					q.setChecked(!q.isChecked());
-					((CheckBox)v).setChecked(q.isChecked());
+					((CheckBox) v).setChecked(q.isChecked());
 					// q.toggleChecked();
 					Collections.sort(values, new QuestionComparator());
-					//upvote.setTag(values.indexOf(q));
+					// upvote.setTag(values.indexOf(q));
 					QuestionListAdapter.this.notifyDataSetChanged();
 				}
-				
+
 			}
 		});
 
@@ -127,6 +152,10 @@ public class QuestionListAdapter extends BaseAdapter {
 	public long getItemId(int position) {
 		// TODO change it to real id later
 		return values.get(position).getId();
+	}
+
+	public ArrayList<Question> getAllQuestions() {
+		return values;
 	}
 
 	public class QuestionComparator implements Comparator<Question> {

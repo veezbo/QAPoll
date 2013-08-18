@@ -16,13 +16,9 @@ public class Question extends QAObject {
 	private String text;
 
 
-	
 	private String ownerId;
 	private boolean isChecked;
 	
-	public Question() {
-	}
-
 	public Question(String title, String text, String userid) {
 
 		this.id = incr++;
@@ -30,13 +26,6 @@ public class Question extends QAObject {
 		votes = 0;
 		this.title = title;
 		this.text = text;
-	}
-
-	public Question(String title, String text) {
-		id = incr++;
-		votes = 0;
-		this.title = title;
-		this.setText(text);
 	}
 
 	public Question(int votestest) {
@@ -116,13 +105,12 @@ public class Question extends QAObject {
 
 	public static Question fromString(String s) {
 		StringTokenizer t = new StringTokenizer(s, QUESTION_SEPARATOR);
-		int id = Integer.parseInt(t.nextToken());
+		String id = t.nextToken();
 		int votes = Integer.parseInt(t.nextToken());
 		String title = t.nextToken();
 		String text = t.nextToken();
 
-		Question q = new Question(title, text);
-		q.setId(id);
+		Question q = new Question(title, text, id);
 		q.setVotes(votes);
 		return q;
 	}
