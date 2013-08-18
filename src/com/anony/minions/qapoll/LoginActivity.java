@@ -128,7 +128,7 @@ public class LoginActivity extends Activity {
 
 	public void bindChordService() {
 		if (mChordService == null) {
-			Intent intent = new Intent();
+			Intent intent = new Intent(Constants.BIND_SERVICE);
 			bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 		}
 	}
@@ -141,7 +141,7 @@ public class LoginActivity extends Activity {
 	}
 
 	private void startService() {
-		Intent intent = new Intent();
+		Intent intent = new Intent(Constants.START_SERVICE);
 		startService(intent);
 	}
 
