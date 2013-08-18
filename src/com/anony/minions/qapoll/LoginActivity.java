@@ -128,8 +128,7 @@ public class LoginActivity extends Activity {
 
 	public void bindChordService() {
 		if (mChordService == null) {
-			Intent intent = new Intent(
-					"com.samsung.chord.samples.apidemo.service.ChordApiDemoService.SERVICE_BIND");
+			Intent intent = new Intent();
 			bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 		}
 	}
@@ -142,14 +141,12 @@ public class LoginActivity extends Activity {
 	}
 
 	private void startService() {
-		Intent intent = new Intent(
-				"com.samsung.chord.samples.apidemo.service.ChordApiDemoService.SERVICE_START");
+		Intent intent = new Intent();
 		startService(intent);
 	}
 
 	private void stopService() {
-		Intent intent = new Intent(
-				"com.samsung.chord.samples.apidemo.service.ChordApiDemoService.SERVICE_STOP");
+		Intent intent = new Intent(Constants.STOP_SERVICE);
 		stopService(intent);
 	}
 
