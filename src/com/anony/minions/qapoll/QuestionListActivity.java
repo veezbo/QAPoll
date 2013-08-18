@@ -10,23 +10,31 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import com.anony.minions.qapoll.adapters.QuestionListAdapter;
 import com.anony.minions.qapoll.data.Question;
-import com.anony.minions.qapoll.data.User;
 
 public class QuestionListActivity extends Activity {
 	QuestionListAdapter adapter;
-	User user;
+	String id;
 	boolean isStudent;
+	String room;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_qustion_list);
 		Intent i=getIntent();
+		String identity=i.getStringExtra("user");
+		if(identity.equals("student")){
+			isStudent=true;
+			id=i.getStringExtra("id");
+		}
+		room=i.getStringExtra("room");
+		Log.i("identity", identity);
 	    //identi=i.getStringExtra("Identity");
 		/*user=(User)getIntent().getExtras().getParcelable("User");
 		if(user instanceof Student){
@@ -35,10 +43,10 @@ public class QuestionListActivity extends Activity {
 		}else{
 			isStudent=false;
 		}*/
-		isStudent=false;
-		Question[] qs=new Question[3];// TODO  pulling the list
+		
+		Question[] qs=new Question[]{new Question(), new Question(), new Question() };// TODO  pulling the list
 		adapter=new QuestionListAdapter(this, qs );
-		final ListView ls=(ListView)findViewById(R.id.question_list);
+	    ListView ls=(ListView)findViewById(R.id.question_list);
 		ls.setAdapter(adapter);
 		
 		if(!isStudent){
@@ -50,7 +58,6 @@ public class QuestionListActivity extends Activity {
 				@Override
 				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 						final int position, long id) {
-					// TODO Auto-generated method stub
 					Log.d("delete question", "long press");
 					new AlertDialog.Builder(QuestionListActivity.this)
 				    .setTitle("Delete This Question")
@@ -112,6 +119,15 @@ public class QuestionListActivity extends Activity {
 
 	private void postQuestion() {
 		// TODO Auto-generated method stub
+		
+	}
+	
+	public void upVoteQuestion(View view){
+		ImageButton button=(ImageButton) view;
+		int position=Integer.parseInt(button.getContentDescription().toString());
+		Question q=adapter.getItem(position);
+		q.incrVote();
+		adapter.notifyDataSetChanged();
 		
 	}
 
