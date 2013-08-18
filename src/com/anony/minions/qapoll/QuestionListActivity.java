@@ -306,7 +306,7 @@ public class QuestionListActivity extends Activity {
 	public void showQuiz(String quiz){
 		Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 		// Vibrate for 500 milliseconds
-		v.vibrate(500); 
+		v.vibrate(500);
 		
 		String[] lines=quiz.split("\n");
 		if (lines.length <1){
@@ -483,7 +483,9 @@ public class QuestionListActivity extends Activity {
 					}
 				}
 			} else if (message.contains("quiz:")) {
-				
+				showQuiz(message
+						.substring(message.indexOf("quiz: ")
+								+ "quiz: ".length()));
 			} else {
 				Question question = Question.fromString(message);
 				Log.d(TAG, "Receiving question with id " + question.getId());
