@@ -44,6 +44,7 @@ public class QuestionListActivity extends Activity {
 			isStudent=false;
 		}*/
 		
+		//TODO: Empty constructor allowed for now (for testing), but should be removed later
 		Question[] qs=new Question[]{new Question(), new Question(), new Question() };// TODO  pulling the list
 		adapter=new QuestionListAdapter(this, qs );
 	    ListView ls=(ListView)findViewById(R.id.question_list);
