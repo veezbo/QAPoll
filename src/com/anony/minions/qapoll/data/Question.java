@@ -53,4 +53,12 @@ public class Question extends QAObject {
 	public User getOwner() {
 		return owner;
 	}
+	
+	public final static String STRING_CONVERSION_INDICATOR = "QUESTION_TO_STRING";
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(STRING_CONVERSION_INDICATOR);
+		return "";
+	}
 }
