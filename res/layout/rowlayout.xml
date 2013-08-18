@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:layout_margin="7dp" >
 
     <TextView
         android:id="@+id/question_title"
@@ -41,13 +42,14 @@
         android:layout_marginRight="62dp"
         android:text="TextView" />
 
-    <ImageView
-        android:id="@+id/imageButton1"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+    <CheckBox
+        android:id="@+id/upvote_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:background="@drawable/upvote"
-        />
+        android:layout_alignTop="@+id/numer_of_votes"
+        android:text="like"
+        android:focusable="false"
+        android:clickable="true"/>
 
 </RelativeLayout>

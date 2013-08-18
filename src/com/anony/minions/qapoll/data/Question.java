@@ -6,6 +6,7 @@ public class Question extends QAObject {
 	int votes;
 	String title;
 	String text;
+	
 	private User owner;
 	public Question() {}
 	public Question(String title, String text, String id){
@@ -53,4 +54,9 @@ public class Question extends QAObject {
 	public User getOwner() {
 		return owner;
 	}
+	public void decVote() {
+		this.votes--;
+	}
+	
+	
 }

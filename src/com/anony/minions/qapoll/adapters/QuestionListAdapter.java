@@ -6,24 +6,31 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.anony.minions.qapoll.QuestionListActivity;
 import com.anony.minions.qapoll.R;
 import com.anony.minions.qapoll.data.Question;
 
 public class QuestionListAdapter extends BaseAdapter {
 	private final Context context;
 	private final ArrayList<Question> values;
+	private int id;
 
 	public QuestionListAdapter(Context context, Question[] values) {
 		super();
 		this.context = context;
+		id=((QuestionListActivity)context).id.hashCode();
 		this.values = new ArrayList<Question>(Arrays.asList(values));
 		Collections.sort(this.values, new QuestionComparator());
 	}
@@ -47,30 +54,42 @@ public class QuestionListAdapter extends BaseAdapter {
 		View rowView = convertView;
 		if (rowView == null) {
 			rowView=inflater.inflate(R.layout.rowlayout, parent, false);
+			
 
 		}
+		
 		final Question q=values.get(position);
+		
+		if(this.id == q.getId()){
+			rowView.setBackgroundColor(Color.parseColor("#1A000000"));
+		}else{
+			rowView.setBackgroundColor(Color.WHITE);
+		}
 		TextView numOfVotes = (TextView) rowView
 				.findViewById(R.id.numer_of_votes);
 		TextView rank = (TextView) rowView.findViewById(R.id.question_rank);
 		TextView title = (TextView) rowView.findViewById(R.id.question_title);
 		TextView preview = (TextView) rowView.findViewById(R.id.QuestionPreview);
-		ImageView upvote=(ImageView)rowView.findViewById(R.id.imageButton1);
+		CheckBox upvote=(CheckBox)rowView.findViewById(R.id.upvote_box);
 		upvote.setContentDescription(""+position);
-		upvote.setOnClickListener(new OnClickListener(){
+		upvote.setOnCheckedChangeListener(new OnCheckedChangeListener()
+		{
+		 
 
 			@Override
-			public void onClick(View view) {
-				//Toast.makeText(context, "ImageView clicked for the row = "+view.getContentDescription(), Toast.LENGTH_SHORT).show();
-	
-				
-				q.incrVote();
+			public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
+				if(isChecked){
+					q.incrVote();
+				 }else{
+					q.decVote();
+					
+				}
+				//q.toggleChecked();
 				Collections.sort(values, new QuestionComparator());
 				QuestionListAdapter.this.notifyDataSetChanged();
-				
 			}
-			
 		});
+		
 		
 		numOfVotes.setText( "" + q.getVotes() );
 		rank.setText( "" + (position + 1) );

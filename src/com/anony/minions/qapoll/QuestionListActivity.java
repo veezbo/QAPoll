@@ -33,7 +33,9 @@ public class QuestionListActivity extends Activity {
 	public static final String TAG = QuestionListActivity.class.getSimpleName();
 
 	QuestionListAdapter adapter;
-	private String id, room;
+	public String id;
+
+	private String room;
 	boolean isStudent;
 
 	private ChordApiService mChordService = null;
@@ -129,6 +131,7 @@ public class QuestionListActivity extends Activity {
 						final int position, long id) {
 					Log.d("delete question", "long press");
 					if ((int)id == QuestionListActivity.this.id.hashCode()) {
+						Log.i("hashcode", ""+QuestionListActivity.this.id.hashCode() );
 						new AlertDialog.Builder(QuestionListActivity.this)
 								.setTitle("Delete This Question")
 								.setMessage(
