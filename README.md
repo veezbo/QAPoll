@@ -5,7 +5,7 @@ An Integrated Q&A Application that promotes interaction between students and ins
 
 Coded almost in full at the 2013 Samsung Developers Hackathon at Paypal, but currently incomplete.
 
-Developed with [Kelvin Lee](https://github.com/sweetcheekz), [Saeid Farivar](https://bitbucket.org/sfarivar), Markus Salasoo, Crystal Qin, and Rohan Ganpatye.
+Developed with [Kelvin Lee](https://github.com/sweetcheekz), [Saeid Farivar](https://bitbucket.org/sfarivar), [Crystal Qin](https://github.com/yq37), Markus Salasoo, and Rohan Ganpatye.
 
 ---
 
